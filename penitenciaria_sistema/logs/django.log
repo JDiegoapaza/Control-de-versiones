@@ -1,0 +1,169 @@
+INFO 2026-06-08 17:19:52,286 autoreload Watching for file changes with StatReloader
+INFO 2026-06-08 17:20:26,068 basehttp "GET / HTTP/1.1" 200 18561
+WARNING 2026-06-08 17:20:26,767 log Not Found: /favicon.ico
+WARNING 2026-06-08 17:20:26,771 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-08 17:20:29,326 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-08 17:21:16,297 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-08 17:21:16,386 basehttp "GET /dashboard/ HTTP/1.1" 200 33873
+INFO 2026-06-08 17:21:27,274 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-08 17:21:28,357 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-08 17:21:29,151 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-08 17:21:30,607 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-08 17:21:32,131 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-08 17:21:33,755 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-08 17:21:34,795 basehttp "GET /ia/ HTTP/1.1" 200 25276
+INFO 2026-06-08 17:21:36,189 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-08 17:21:38,045 basehttp "GET /reportes/3f4abeba-106f-4cc7-8fde-6f97613cf5e8/ HTTP/1.1" 200 51142
+WARNING 2026-06-09 22:44:26,727 log Unauthorized: /auth/api/login/
+WARNING 2026-06-09 22:54:32,682 log Not Found: /internos/9bbeb70a-8c2c-4740-a313-24309a953ee6/
+WARNING 2026-06-09 22:54:36,085 log Unauthorized: /auth/api/login/
+INFO 2026-06-10 18:48:04,947 autoreload Watching for file changes with StatReloader
+INFO 2026-06-10 18:51:08,989 autoreload Watching for file changes with StatReloader
+INFO 2026-06-10 18:52:19,193 basehttp "GET / HTTP/1.1" 200 18561
+WARNING 2026-06-10 18:52:20,160 log Not Found: /favicon.ico
+WARNING 2026-06-10 18:52:20,161 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-10 18:52:21,308 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-10 18:52:33,796 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-10 18:52:33,960 basehttp "GET /dashboard/ HTTP/1.1" 200 33879
+INFO 2026-06-10 18:52:38,327 basehttp "GET /auth/usuarios/ HTTP/1.1" 200 23766
+INFO 2026-06-10 18:52:41,920 basehttp "GET /dashboard/ HTTP/1.1" 200 33879
+INFO 2026-06-10 18:54:39,076 autoreload Watching for file changes with StatReloader
+WARNING 2026-06-10 18:55:17,721 log Not Found: /internos/dced6f38-f62c-435f-a077-e2d47604f016/
+WARNING 2026-06-10 18:55:23,860 log Unauthorized: /auth/api/login/
+WARNING 2026-06-10 18:56:20,868 log Forbidden (CSRF cookie not set.): /auth/login/
+INFO 2026-06-10 19:06:32,880 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-10 19:06:33,556 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-10 19:06:34,376 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-10 19:06:35,109 basehttp "GET /ia/ HTTP/1.1" 200 25276
+INFO 2026-06-10 19:06:35,703 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-10 19:06:38,645 basehttp "GET /reportes/3f4abeba-106f-4cc7-8fde-6f97613cf5e8/ HTTP/1.1" 200 53321
+INFO 2026-06-10 19:06:42,314 basehttp "GET /auth/usuarios/ HTTP/1.1" 200 23766
+INFO 2026-06-10 20:20:35,272 basehttp "GET /dashboard/ HTTP/1.1" 200 33879
+INFO 2026-06-10 21:12:10,040 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-10 21:12:32,801 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-10 21:12:37,795 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-10 21:12:42,225 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-10 21:12:49,850 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-10 21:12:54,019 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-10 21:12:55,116 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-10 21:13:09,766 basehttp "GET /ia/ HTTP/1.1" 200 25276
+INFO 2026-06-10 21:13:59,599 basehttp "GET /ia/analizar/ HTTP/1.1" 200 21636
+INFO 2026-06-10 21:14:12,750 basehttp "POST /ia/analizar/ HTTP/1.1" 302 0
+INFO 2026-06-10 21:14:12,823 basehttp "GET /ia/prediccion/7f6dbbb4-f143-4e9e-b5fa-f9fe6de71914/ HTTP/1.1" 200 25156
+INFO 2026-06-10 21:14:46,402 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/ HTTP/1.1" 200 23288
+INFO 2026-06-10 21:14:56,581 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-10 21:15:04,558 basehttp "GET /reportes/3f4abeba-106f-4cc7-8fde-6f97613cf5e8/ HTTP/1.1" 200 54327
+INFO 2026-06-10 21:15:09,146 basehttp "GET /seguridad/ HTTP/1.1" 200 31538
+INFO 2026-06-10 21:15:23,849 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-10 21:15:24,755 basehttp "GET /seguridad/ HTTP/1.1" 200 31538
+INFO 2026-06-10 21:15:25,344 basehttp "GET /auth/usuarios/ HTTP/1.1" 200 23766
+INFO 2026-06-10 21:15:37,564 basehttp "GET /admin/ HTTP/1.1" 200 14574
+INFO 2026-06-10 21:15:39,184 basehttp "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2026-06-10 21:15:39,320 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2026-06-10 21:15:39,332 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+INFO 2026-06-10 21:15:39,377 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2026-06-10 21:15:39,386 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2026-06-10 21:15:39,392 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2026-06-10 21:15:39,397 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+INFO 2026-06-10 21:15:39,449 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2026-06-10 21:15:39,451 basehttp "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2026-06-22 23:54:00,834 autoreload Watching for file changes with StatReloader
+INFO 2026-06-22 23:54:15,439 basehttp "GET / HTTP/1.1" 200 18561
+WARNING 2026-06-22 23:54:16,632 log Not Found: /favicon.ico
+WARNING 2026-06-22 23:54:16,634 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-22 23:54:17,546 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-22 23:55:38,989 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-22 23:55:39,172 basehttp "GET /dashboard/ HTTP/1.1" 200 33874
+INFO 2026-06-22 23:56:19,662 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-22 23:56:21,227 basehttp "GET /internos/nuevo/ HTTP/1.1" 200 27643
+INFO 2026-06-22 23:56:39,226 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-22 23:56:42,428 basehttp "GET /evaluaciones/nueva/ HTTP/1.1" 200 27272
+INFO 2026-06-22 23:56:57,037 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-22 23:57:10,250 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-22 23:57:21,368 basehttp "GET /rehabilitacion/nueva/ HTTP/1.1" 200 21495
+INFO 2026-06-22 23:57:36,457 basehttp "GET /ia/ HTTP/1.1" 200 26252
+INFO 2026-06-22 23:57:55,521 basehttp "GET /ia/analizar/ HTTP/1.1" 200 21636
+INFO 2026-06-22 23:57:58,915 basehttp "POST /ia/analizar/ HTTP/1.1" 302 0
+INFO 2026-06-22 23:57:58,985 basehttp "GET /ia/prediccion/1309e14c-31a7-4a39-900d-a8b4e5a849b9/ HTTP/1.1" 200 25156
+INFO 2026-06-22 23:58:13,293 basehttp "GET /reportes/ HTTP/1.1" 200 30625
+INFO 2026-06-22 23:58:25,399 basehttp "GET /reportes/nuevo/ HTTP/1.1" 200 27308
+INFO 2026-06-22 23:58:39,803 basehttp "POST /reportes/nuevo/ HTTP/1.1" 302 0
+INFO 2026-06-22 23:58:39,937 basehttp "GET /reportes/9bd0c5c6-118e-44aa-b066-8571a7af8003/ HTTP/1.1" 200 23642
+INFO 2026-06-22 23:58:51,987 basehttp - Broken pipe from ('127.0.0.1', 54352)
+INFO 2026-06-22 23:58:51,995 basehttp "GET /reportes/9bd0c5c6-118e-44aa-b066-8571a7af8003/pdf/ HTTP/1.1" 200 3163
+INFO 2026-06-23 11:48:19,960 autoreload Watching for file changes with StatReloader
+INFO 2026-06-23 11:48:32,958 basehttp "GET / HTTP/1.1" 200 18561
+WARNING 2026-06-23 11:48:33,896 log Not Found: /favicon.ico
+WARNING 2026-06-23 11:48:33,897 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-23 11:48:34,843 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-23 11:54:18,145 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-23 11:54:45,741 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-23 11:54:46,068 basehttp "GET /dashboard/ HTTP/1.1" 200 33875
+INFO 2026-06-23 11:55:08,855 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-23 11:55:16,911 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/editar/ HTTP/1.1" 200 27714
+INFO 2026-06-23 11:55:19,825 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/ HTTP/1.1" 200 23288
+INFO 2026-06-23 11:55:22,538 basehttp "GET /internos/nuevo/ HTTP/1.1" 200 27643
+INFO 2026-06-23 11:55:28,162 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-23 11:55:36,249 basehttp "GET /evaluaciones/nueva/ HTTP/1.1" 200 27272
+INFO 2026-06-23 11:55:38,693 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-23 11:55:42,234 basehttp "GET /rehabilitacion/programas/ HTTP/1.1" 200 19090
+INFO 2026-06-23 11:55:43,851 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-23 11:55:46,148 basehttp "GET /rehabilitacion/nueva/ HTTP/1.1" 200 21495
+INFO 2026-06-23 11:55:48,535 basehttp "GET /ia/ HTTP/1.1" 200 27228
+INFO 2026-06-23 11:57:45,266 basehttp "GET /reportes/ HTTP/1.1" 200 32451
+INFO 2026-06-23 11:58:01,738 basehttp "GET /reportes/4bfe5de8-1e0d-4ec2-9766-5921d5054622/pdf/ HTTP/1.1" 200 3049
+INFO 2026-06-23 11:58:01,755 basehttp - Broken pipe from ('127.0.0.1', 55133)
+INFO 2026-06-23 11:58:10,191 basehttp "GET /seguridad/ HTTP/1.1" 200 31670
+INFO 2026-06-23 11:58:13,482 basehttp "GET /reportes/ HTTP/1.1" 200 32451
+INFO 2026-06-23 11:58:15,469 basehttp "GET /auth/usuarios/ HTTP/1.1" 200 23766
+INFO 2026-06-23 11:58:24,369 basehttp "GET /admin/ HTTP/1.1" 200 14574
+INFO 2026-06-23 11:58:25,080 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+INFO 2026-06-23 11:58:25,122 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+INFO 2026-06-23 11:58:25,125 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2026-06-23 11:58:25,136 basehttp "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2026-06-23 11:58:25,143 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2026-06-23 11:58:25,150 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2026-06-23 11:58:25,171 basehttp "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2026-06-23 11:58:25,171 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2026-06-23 11:58:25,174 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2026-06-23 21:53:50,028 autoreload Watching for file changes with StatReloader
+INFO 2026-06-23 22:48:07,775 autoreload Watching for file changes with StatReloader
+INFO 2026-06-23 22:48:16,968 basehttp "GET / HTTP/1.1" 200 18561
+WARNING 2026-06-23 22:48:17,470 log Not Found: /favicon.ico
+WARNING 2026-06-23 22:48:17,472 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-23 22:48:18,424 basehttp "GET /auth/login/ HTTP/1.1" 200 16126
+INFO 2026-06-23 22:48:48,614 basehttp "POST /auth/login/ HTTP/1.1" 200 16373
+INFO 2026-06-23 22:49:29,727 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-23 22:49:29,906 basehttp "GET /dashboard/ HTTP/1.1" 200 33875
+INFO 2026-06-23 22:49:31,162 basehttp "GET /internos/ HTTP/1.1" 200 22652
+INFO 2026-06-23 22:49:32,511 basehttp "GET /internos/nuevo/ HTTP/1.1" 200 27643
+INFO 2026-06-23 22:50:46,787 basehttp "POST /internos/nuevo/ HTTP/1.1" 302 0
+INFO 2026-06-23 22:50:46,831 basehttp "GET /internos/ HTTP/1.1" 200 24681
+INFO 2026-06-23 22:51:12,182 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/ HTTP/1.1" 200 23288
+INFO 2026-06-23 22:51:38,760 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/editar/ HTTP/1.1" 200 27714
+INFO 2026-06-23 22:52:01,547 basehttp "POST /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/editar/ HTTP/1.1" 302 0
+INFO 2026-06-23 22:52:01,588 basehttp "GET /internos/ff228e7d-18ae-4924-add6-54f5c195dea1/ HTTP/1.1" 200 23865
+INFO 2026-06-23 22:52:24,729 basehttp "GET /ia/analizar/?interno=ff228e7d-18ae-4924-add6-54f5c195dea1 HTTP/1.1" 200 21772
+INFO 2026-06-23 22:52:29,965 basehttp "POST /ia/analizar/?interno=ff228e7d-18ae-4924-add6-54f5c195dea1 HTTP/1.1" 302 0
+INFO 2026-06-23 22:52:30,046 basehttp "GET /ia/prediccion/7d9946b1-8a08-49aa-83fd-f5a7e4579684/ HTTP/1.1" 200 25155
+INFO 2026-06-23 22:52:54,111 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-23 22:52:56,061 basehttp "GET /evaluaciones/1dbb3fff-04e9-414b-9103-6f5bbdcd6f39/ HTTP/1.1" 200 20145
+INFO 2026-06-23 22:53:38,639 basehttp "GET /evaluaciones/ HTTP/1.1" 200 21464
+INFO 2026-06-23 22:53:39,793 basehttp "GET /evaluaciones/nueva/ HTTP/1.1" 200 27689
+INFO 2026-06-23 22:54:12,001 basehttp "POST /evaluaciones/nueva/ HTTP/1.1" 302 0
+INFO 2026-06-23 22:54:12,027 basehttp "GET /evaluaciones/ HTTP/1.1" 200 23408
+INFO 2026-06-23 22:54:30,902 basehttp "GET /rehabilitacion/ HTTP/1.1" 200 20543
+INFO 2026-06-23 22:54:55,086 basehttp "GET /reportes/ HTTP/1.1" 200 32451
+INFO 2026-06-23 22:55:03,388 basehttp "GET /reportes/9bd0c5c6-118e-44aa-b066-8571a7af8003/ HTTP/1.1" 200 23510
+INFO 2026-06-23 22:55:06,972 basehttp "GET /reportes/ HTTP/1.1" 200 32451
+INFO 2026-06-23 22:55:09,005 basehttp "GET /reportes/3f4abeba-106f-4cc7-8fde-6f97613cf5e8/ HTTP/1.1" 200 63611
+INFO 2026-06-23 22:55:36,504 basehttp "GET /reportes/ HTTP/1.1" 200 32451
+INFO 2026-06-23 22:55:39,203 basehttp "GET /seguridad/ HTTP/1.1" 200 31732
+INFO 2026-06-23 22:55:58,140 basehttp "GET /auth/usuarios/ HTTP/1.1" 200 23766
+INFO 2026-06-24 16:54:20,133 autoreload Watching for file changes with StatReloader
+INFO 2026-06-24 16:54:51,225 basehttp "GET /auth/usuarios/ HTTP/1.1" 302 0
+INFO 2026-06-24 16:54:51,494 basehttp "GET /login/?next=/auth/usuarios/ HTTP/1.1" 200 16126
+WARNING 2026-06-24 16:54:52,927 log Not Found: /favicon.ico
+WARNING 2026-06-24 16:54:52,929 basehttp "GET /favicon.ico HTTP/1.1" 404 3839
+INFO 2026-06-24 16:55:36,398 basehttp "POST /auth/login/ HTTP/1.1" 302 0
+INFO 2026-06-24 16:55:36,892 basehttp "GET /dashboard/ HTTP/1.1" 200 35084

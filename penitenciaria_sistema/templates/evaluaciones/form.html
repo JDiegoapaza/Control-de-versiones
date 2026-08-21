@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'evaluaciones:lista' %}">Evaluaciones</a>
+</li>
+<li class="breadcrumb-item active">
+    {{ accion }}
+</li>
+{% endblock %}
+
+{% block content %}
+
+{% include 'partials/messages.html' %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard2-pulse me-2"></i>
+                    {{ titulo }}
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <form method="post" novalidate>
+
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+
+                        <!-- TITULO -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                Título de la Evaluación
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="titulo"
+                                class="form-control"
+                                required
+                                placeholder="Ej: Evaluación psicológica inicial"
+
+                                value="{% if form_data %}{{ form_data.titulo }}{% else %}{{ evaluacion.titulo|default:'' }}{% endif %}"
+                            >
+                        </div>
+
+                        <!-- INTERNO -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Interno Evaluado
+                            </label>
+
+                            <select name="interno" class="form-select">
+
+                                <option value="">
+                                    — Seleccionar interno —
+                                </option>
+
+                                {% for i in internos %}
+
+                                <option
+                                    value="{{ i.pk }}"
+
+                                    {% if form_data %}
+
+                                        {% if form_data.interno == i.pk|stringformat:'s' %}
+                                            selected
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if evaluacion.interno_id == i.pk %}
+                                            selected
+                                        {% endif %}
+
+                                    {% endif %}
+                                >
+                                    {{ i.apellido }}, {{ i.nombre }} ({{ i.cedula }})
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Estado
+                            </label>
+
+                            <select name="estado" class="form-select">
+
+                                {% for val, label in estado_choices %}
+
+                                <option
+                                    value="{{ val }}"
+
+                                    {% if form_data %}
+
+                                        {% if form_data.estado == val %}
+                                            selected
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if evaluacion.estado == val %}
+                                            selected
+                                        {% elif not evaluacion and val == 'pendiente' %}
+                                            selected
+                                        {% endif %}
+
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- NIVEL RIESGO -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Nivel de Riesgo
+                            </label>
+
+                            <select name="nivel_riesgo" class="form-select">
+
+                                <option value="">
+                                    — Sin determinar —
+                                </option>
+
+                                {% for val, label in riesgo_choices %}
+
+                                <option
+                                    value="{{ val }}"
+
+                                    {% if form_data %}
+
+                                        {% if form_data.nivel_riesgo == val %}
+                                            selected
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if evaluacion.nivel_riesgo == val %}
+                                            selected
+                                        {% endif %}
+
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- CALIFICACION -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                Calificación de Riesgo (%)
+                            </label>
+
+                            <input
+                                type="number"
+                                name="calificacion_riesgo"
+                                class="form-control"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                placeholder="Ej: 75.5"
+
+                                value="{% if form_data %}{{ form_data.calificacion_riesgo }}{% else %}{{ evaluacion.calificacion_riesgo|default:'' }}{% endif %}"
+                            >
+
+                            <div class="form-text">
+                                Ingrese un valor entre 0 y 100
+                            </div>
+                        </div>
+
+                        <!-- OBSERVACIONES -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                Observaciones / Resultados
+                            </label>
+
+                            <textarea
+                                name="observaciones"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Resultados y observaciones de la evaluación..."
+                            >{% if form_data %}{{ form_data.observaciones }}{% else %}{{ evaluacion.observaciones|default:'' }}{% endif %}</textarea>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex gap-2 justify-content-end">
+
+                        <a href="{% url 'evaluaciones:lista' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>
+                            Volver
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>
+                            {{ accion }}
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

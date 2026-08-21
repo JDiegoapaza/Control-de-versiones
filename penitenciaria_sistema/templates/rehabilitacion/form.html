@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'rehabilitacion:lista' %}">Rehabilitación</a></li>
+<li class="breadcrumb-item active">{{ accion }}</li>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>{{ titulo }}</h5>
+      </div>
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Interno <span class="text-danger">*</span></label>
+              <select name="interno" class="form-select" required>
+                <option value="">— Seleccionar —</option>
+                {% for i in internos %}<option value="{{ i.pk }}" {% if rehab.interno_id == i.pk %}selected{% endif %}>{{ i.apellido }}, {{ i.nombre }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Programa</label>
+              <select name="programa" class="form-select">
+                <option value="">— Sin programa —</option>
+                {% for p in programas %}<option value="{{ p.pk }}" {% if rehab.programa_id == p.pk %}selected{% endif %}>{{ p.nombre }} ({{ p.get_tipo_display }})</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Estado</label>
+              <select name="estado" class="form-select">
+                {% for val, label in estado_choices %}<option value="{{ val }}" {% if rehab.estado == val %}selected{% elif not rehab and val == 'pendiente' %}selected{% endif %}>{{ label }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Progreso (%)</label>
+              <input type="number" name="progreso" class="form-control" min="0" max="100" step="1" value="{{ rehab.progreso|default:'0' }}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Fecha de Inicio</label>
+              <input type="date" name="fecha_inicio" class="form-control" value="{{ rehab.fecha_inicio|date:'Y-m-d'|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Fecha Fin Prevista</label>
+              <input type="date" name="fecha_fin_prevista" class="form-control" value="{{ rehab.fecha_fin_prevista|date:'Y-m-d'|default:'' }}">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Observaciones</label>
+              <textarea name="observaciones" class="form-control" rows="3" placeholder="Notas sobre el progreso...">{{ rehab.observaciones|default:'' }}</textarea>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'rehabilitacion:lista' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-1"></i>{{ accion }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

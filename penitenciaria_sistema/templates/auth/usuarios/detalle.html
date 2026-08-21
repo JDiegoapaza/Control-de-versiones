@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block extra_head %}
+<style>
+.info-row { display:flex; gap:8px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border); font-size:13.5px; }
+.info-row:last-child { border-bottom:none; }
+.info-label { font-weight:600; color:var(--text-secondary); width:180px; flex-shrink:0; }
+.info-value { color:var(--text-primary); }
+.badge-activo   { background:#dcfce7; color:#15803d; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:600; }
+.badge-inactivo { background:#fee2e2; color:#b91c1c; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:600; }
+.badge-bloq     { background:#fef3c7; color:#92400e; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:600; }
+</style>
+{% endblock %}
+
+{% block header_title %}{{ titulo }}{% endblock %}
+{% block header_subtitle %}Ficha completa del usuario{% endblock %}
+{% block header_actions %}
+    <div class="d-flex gap-2">
+        <a href="{% url 'auth:usuario_editar' uid=obj.id %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-pencil me-1"></i> Editar
+        </a>
+        <a href="{% url 'auth:usuario_reset_password' uid=obj.id %}" class="btn btn-outline-warning btn-sm">
+            <i class="bi bi-key me-1"></i> Restablecer contraseña
+        </a>
+        {% if obj.id != request.user.id %}
+        <form method="POST" action="{% url 'auth:usuario_toggle' uid=obj.id %}" class="d-inline"
+              onsubmit="return confirm('¿Confirma cambiar el estado del usuario?')">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-sm {% if obj.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                <i class="bi bi-{% if obj.activo %}person-x{% else %}person-check{% endif %} me-1"></i>
+                {% if obj.activo %}Desactivar{% else %}Activar{% endif %}
+            </button>
+        </form>
+        {% endif %}
+        <a href="{% url 'auth:usuarios_lista' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+    <!-- Datos del usuario -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-person-badge-fill me-2"></i>Datos del usuario</div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Usuario (login)</span>
+                    <span class="info-value fw-700">{{ obj.username }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nombre completo</span>
+                    <span class="info-value">{{ obj.get_full_name|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ obj.email|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Cédula</span>
+                    <span class="info-value">{{ obj.cedula|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Teléfono</span>
+                    <span class="info-value">{{ obj.telefono|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Especialidad</span>
+                    <span class="info-value">{{ obj.especialidad|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Centro penitenciario</span>
+                    <span class="info-value">{{ obj.centro_penitenciario|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Rol</span>
+                    <span class="info-value">
+                        <span style="background:#e0f2fe;color:#0369a1;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600;">
+                            {{ obj.rol.get_nombre_display }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado y seguridad -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-shield-lock-fill me-2"></i>Estado y seguridad</div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Estado de cuenta</span>
+                    <span class="info-value">
+                        {% if obj.bloqueado %}
+                            <span class="badge-bloq"><i class="bi bi-lock-fill me-1"></i>Bloqueada</span>
+                        {% elif obj.activo %}
+                            <span class="badge-activo"><i class="bi bi-check-circle-fill me-1"></i>Activa</span>
+                        {% else %}
+                            <span class="badge-inactivo"><i class="bi bi-x-circle-fill me-1"></i>Inactiva</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Superusuario</span>
+                    <span class="info-value">{% if obj.is_superuser %}Sí{% else %}No{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Último login</span>
+                    <span class="info-value">{{ obj.ultimo_login|date:"d/m/Y H:i"|default:"Nunca" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">IP último login</span>
+                    <span class="info-value">{{ obj.ultimo_login_ip|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Intentos fallidos</span>
+                    <span class="info-value">{{ obj.intentos_fallidos }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Debe cambiar pwd</span>
+                    <span class="info-value">{% if obj.debe_cambiar_password %}Sí{% else %}No{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Razón bloqueo</span>
+                    <span class="info-value">{{ obj.razon_bloqueo|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Creado por</span>
+                    <span class="info-value">{{ obj.creado_por }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimos eventos de auditoría -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-journal-text me-2"></i>Últimos eventos de auditoría</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Evento</th>
+                                <th>Descripción</th>
+                                <th>IP</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td style="font-size:12px; white-space:nowrap;">{{ log.fecha|date:"d/m/Y H:i:s" }}</td>
+                            <td>
+                                <span style="font-size:11px; font-weight:600; font-family:monospace;
+                                             background:#f1f5f9; padding:2px 6px; border-radius:4px;">
+                                    {{ log.tipo_evento }}
+                                </span>
+                            </td>
+                            <td style="font-size:12px;">{{ log.descripcion|truncatechars:80 }}</td>
+                            <td style="font-size:12px; font-family:monospace;">{{ log.ip_address|default:"—" }}</td>
+                            <td>
+                                <span style="font-size:11px; font-weight:600;
+                                    {% if log.estado == 'EXITOSO' %}color:#15803d;{% elif log.estado == 'FALLIDO' %}color:#b91c1c;{% else %}color:#92400e;{% endif %}">
+                                    {{ log.estado }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted" style="font-size:13px;">
+                                Sin eventos de auditoría registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

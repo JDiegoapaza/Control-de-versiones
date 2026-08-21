@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Predicción IA{% endblock %}
+{% block page_title %}Resultado del Análisis IA{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'ia:lista' %}">IA</a></li>
+<li class="breadcrumb-item active">Predicción</li>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+
+<!-- Header resultado -->
+<div class="card border-0 mb-4 text-white"
+     style="background:{% if prediccion.nivel_riesgo == 'bajo' %}linear-gradient(135deg,#16a34a,#22c55e){% elif prediccion.nivel_riesgo == 'medio' %}linear-gradient(135deg,#b45309,#f59e0b){% elif prediccion.nivel_riesgo == 'alto' %}linear-gradient(135deg,#b91c1c,#ef4444){% else %}linear-gradient(135deg,#111827,#374151){% endif %}">
+  <div class="card-body p-4">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h4 class="fw-bold mb-1">
+          <i class="bi bi-{% if prediccion.nivel_riesgo == 'critico' %}exclamation-triangle-fill{% elif prediccion.nivel_riesgo == 'alto' %}exclamation-circle-fill{% elif prediccion.nivel_riesgo == 'medio' %}dash-circle-fill{% else %}check-circle-fill{% endif %} me-2"></i>
+          RIESGO {{ prediccion.nivel_riesgo|upper }}
+        </h4>
+        <p class="mb-0 opacity-90">Interno: <strong>{{ prediccion.interno.nombre_completo }}</strong> — {{ prediccion.interno.cedula }}</p>
+        <small class="opacity-75">Generado: {{ prediccion.fecha_prediccion|date:"d/m/Y H:i" }} | Modelo: {{ prediccion.modelo_version }}</small>
+      </div>
+      <div class="col-md-4 text-center text-md-end">
+        <div class="display-3 fw-black">{{ score_raw|floatformat:0 }}</div>
+        <div class="opacity-80">/ 100 puntos</div>
+        <div class="small opacity-70">Confianza: {{ prediccion.confianza|floatformat:0 }}%</div>
+      </div>
+    </div>
+    <!-- Barra de score -->
+    <div class="mt-3">
+      <div class="progress" style="height:10px;background:rgba(255,255,255,0.2)">
+        <div class="progress-bar bg-white" style="width:{{ score_raw|floatformat:0 }}%"></div>
+      </div>
+      <div class="d-flex justify-content-between small mt-1 opacity-70">
+        <span>0 — Bajo</span><span>25</span><span>50 — Medio</span><span>75</span><span>100 — Crítico</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Factores determinantes -->
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Factores Determinantes</h6></div>
+      <div class="card-body">
+        {% if factores_det %}
+        {% for key, factor in factores_det.items %}
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold small">{{ factor.descripcion }}</span>
+            <span class="badge {% if '-' in factor.impacto %}bg-success{% else %}bg-danger{% endif %}">
+              {{ factor.impacto }} pts
+            </span>
+          </div>
+          <div class="text-muted small">Valor: {{ factor.valor }}</div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted">No se identificaron factores específicos.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recomendaciones -->
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Recomendaciones Automáticas</h6></div>
+      <div class="card-body">
+        {% if recomendaciones %}
+        <ul class="list-unstyled mb-0">
+          {% for rec in recomendaciones %}
+          <li class="d-flex gap-2 mb-2">
+            <i class="bi bi-arrow-right-circle text-primary mt-1 flex-shrink-0"></i>
+            <span class="small">{{ rec }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">Sin recomendaciones adicionales.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Features (datos del análisis) -->
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-database me-2"></i>Features del Análisis <small class="text-muted fw-normal">(datos estructurados para ML futuro)</small></h6>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Edad</small><strong>{{ features.edad|default:"—" }}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Reincidencias</small><strong>{{ features.reincidencias|default:"0" }}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Delito Violento</small><strong>{% if features.delito_violento %}Sí{% else %}No{% endif %}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Apoyo Familiar</small><strong>{% if features.apoyo_familiar %}Sí{% else %}No{% endif %}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Depresión Severa</small><strong>{% if features.depresion_severa %}Sí{% else %}No{% endif %}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Ansiedad Severa</small><strong>{% if features.ansiedad_severa %}Sí{% else %}No{% endif %}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Talleres Completados</small><strong>{{ features.talleres_completados|default:"0" }}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Evaluaciones</small><strong>{{ features.num_evaluaciones|default:"0" }}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">En Rehabilitación</small><strong>{% if features.en_rehabilitacion %}Sí{% else %}No{% endif %}</strong></div>
+          <div class="col-md-3 col-6"><small class="text-muted d-block">Cal. Riesgo Promedio</small><strong>{% if features.calificacion_riesgo_promedio %}{{ features.calificacion_riesgo_promedio|floatformat:1 }}%{% else %}—{% endif %}</strong></div>
+        </div>
+        <div class="alert alert-secondary mt-3 mb-0 small">
+          <i class="bi bi-info-circle me-2"></i>
+          <strong>ML-Ready:</strong> Estos features se almacenan en el campo <code>factores.features</code> del modelo <code>PrediccionRiesgo</code> para futuro entrenamiento con scikit-learn/pandas.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <a href="{% url 'ia:lista' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+  <a href="{% url 'internos:detalle' prediccion.interno.pk %}" class="btn btn-outline-primary"><i class="bi bi-person me-1"></i>Ver Interno</a>
+  <a href="{% url 'ia:analizar' %}" class="btn btn-primary"><i class="bi bi-cpu me-1"></i>Nuevo Análisis</a>
+</div>
+{% endblock %}

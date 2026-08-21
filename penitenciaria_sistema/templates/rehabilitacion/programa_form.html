@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'rehabilitacion:programas' %}">Programas</a></li>
+<li class="breadcrumb-item active">{{ accion }}</li>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white"><h5 class="mb-0">{{ titulo }}</h5></div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre del Programa <span class="text-danger">*</span></label>
+            <input type="text" name="nombre" class="form-control" required placeholder="Nombre del programa">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Tipo</label>
+            <select name="tipo" class="form-select">
+              {% for val, label in tipo_choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Duración (días)</label>
+            <input type="number" name="duracion_dias" class="form-control" value="30" min="1">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción del programa..."></textarea>
+          </div>
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'rehabilitacion:programas' %}" class="btn btn-outline-secondary">Volver</a>
+            <button type="submit" class="btn btn-primary">Crear Programa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

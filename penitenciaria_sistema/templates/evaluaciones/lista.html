@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Evaluaciones{% endblock %}
+{% block page_title %}Evaluaciones Psicológicas{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Evaluaciones</li>{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <span class="badge bg-primary fs-6 px-3 py-2">{{ total }} evaluación{{ total|pluralize }}</span>
+  <a href="{% url 'evaluaciones:crear' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>Nueva Evaluación</a>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body py-3">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Título o nombre de interno..." value="{{ q }}"></div>
+      <div class="col-md-3">
+        <select name="estado" class="form-select">
+          <option value="">Todos los estados</option>
+          {% for val, label in estado_choices %}<option value="{{ val }}" {% if estado_filter == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select name="riesgo" class="form-select">
+          <option value="">Todos los riesgos</option>
+          {% for val, label in riesgo_choices %}<option value="{{ val }}" {% if riesgo_filter == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Filtrar</button></div>
+      {% if q or estado_filter or riesgo_filter %}<div class="col-md-1"><a href="{% url 'evaluaciones:lista' %}" class="btn btn-outline-secondary w-100">✕</a></div>{% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    {% if evaluaciones %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Título</th><th>Interno</th><th>Estado</th><th>Nivel Riesgo</th><th>Cal. Riesgo</th><th>Fecha</th><th class="text-end">Acciones</th></tr>
+        </thead>
+        <tbody>
+          {% for ev in evaluaciones %}
+          <tr>
+            <td><div class="fw-semibold">{{ ev.titulo }}</div></td>
+            <td>{% if ev.interno %}<a href="{% url 'internos:detalle' ev.interno.pk %}">{{ ev.interno.nombre_completo }}</a>{% else %}—{% endif %}</td>
+            <td>
+              {% if ev.estado == 'completada' %}<span class="badge bg-success">Completada</span>
+              {% elif ev.estado == 'en_proceso' %}<span class="badge bg-info">En proceso</span>
+              {% elif ev.estado == 'pendiente' %}<span class="badge bg-warning text-dark">Pendiente</span>
+              {% else %}<span class="badge bg-secondary">{{ ev.get_estado_display }}</span>{% endif %}
+            </td>
+            <td>{% if ev.nivel_riesgo %}<span class="badge bg-{% if ev.nivel_riesgo == 'bajo' %}success{% elif ev.nivel_riesgo == 'medio' %}warning text-dark{% elif ev.nivel_riesgo == 'alto' %}danger{% else %}dark{% endif %}">{{ ev.get_nivel_riesgo_display }}</span>{% else %}—{% endif %}</td>
+            <td>{% if ev.calificacion_riesgo %}{{ ev.calificacion_riesgo|floatformat:1 }}%{% else %}—{% endif %}</td>
+            <td><small>{{ ev.fecha_creacion|date:"d/m/Y" }}</small></td>
+            <td class="text-end">
+              <a href="{% url 'evaluaciones:detalle' ev.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+              <a href="{% url 'evaluaciones:editar' ev.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{% url 'evaluaciones:eliminar' ev.pk %}" class="d-inline" onsubmit="return confirm('¿Eliminar esta evaluación?')">
+                {% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include 'partials/pagination.html' with page_obj=evaluaciones %}
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-clipboard2-pulse fs-1 d-block mb-3 opacity-25"></i>
+      <p>No se encontraron evaluaciones.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

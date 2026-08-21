@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page_title %}Dashboard — Panel de Control{% endblock %}
+
+{% block extra_head %}
+<style>
+    .welcome-strip {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b5fc0 60%, #0f766e 100%);
+        border-radius: 14px;
+        padding: 28px 32px;
+        color: white;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+    .welcome-strip::before {
+        content: '';
+        position: absolute;
+        right: -20px; top: -20px;
+        width: 160px; height: 160px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 50%;
+    }
+    .welcome-strip::after {
+        content: '';
+        position: absolute;
+        right: 40px; bottom: -40px;
+        width: 100px; height: 100px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 50%;
+    }
+    .welcome-title { font-size: 24px; font-weight: 800; margin: 0 0 4px; }
+    .welcome-sub   { font-size: 14px; opacity: 0.82; margin: 0; }
+    .welcome-date  { font-size: 12px; opacity: 0.65; margin-top: 10px; }
+
+    .chart-card { height: 300px; }
+    .chart-card canvas { max-height: 260px; }
+
+    .activity-row td { font-size: 13px; }
+    .empty-state {
+        text-align: center; padding: 40px 20px;
+        color: var(--text-muted);
+    }
+    .empty-state i { font-size: 40px; opacity: 0.4; display: block; margin-bottom: 12px; }
+
+    .risk-badge-bajo    { background: #dcfce7; color: #15803d; }
+    .risk-badge-medio   { background: #fef9c3; color: #854d0e; }
+    .risk-badge-alto    { background: #ffedd5; color: #c2410c; }
+    .risk-badge-critico { background: #fee2e2; color: #b91c1c; }
+</style>
+{% endblock %}
+
+{% block header_title %}Dashboard{% endblock %}
+{% block header_subtitle %}Bienvenido, {{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin:index' %}" class="btn btn-sm btn-outline-primary rounded-3">
+    <i class="bi bi-gear me-1"></i> Admin
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== BIENVENIDA ===== -->
+<div class="welcome-strip fade-in-up">
+    <div class="row align-items-center">
+        <div class="col">
+            <h2 class="welcome-title">
+                ¡Bienvenido, {{ user.get_full_name|default:user.username }}!
+            </h2>
+            <p class="welcome-sub">
+                {% if user.rol %}
+                    Acceso como <strong>{{ user.rol.get_nombre_display }}</strong>
+                    {% if user.centro_penitenciario %} — {{ user.centro_penitenciario }}{% endif %}
+                {% else %}
+                    Panel de control del Sistema de Gestión Penitenciaria
+                {% endif %}
+            </p>
+            <p class="welcome-date">
+                <i class="bi bi-calendar3 me-1"></i>
+                {{ fecha_actual|date:"l, j \de F \de Y — H:i" }}
+            </p>
+        </div>
+        <div class="col-auto d-none d-md-block">
+            <i class="bi bi-shield-fill-check" style="font-size:60px; opacity:0.2;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TARJETAS DE MÉTRICAS ===== -->
+<div class="row g-4 mb-4 fade-in-up">
+    <!-- Total Internos -->
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_internos|default:"0" }}</div>
+                <div class="stat-label">Internos Activos</div>
+                <div class="stat-meta"><i class="bi bi-arrow-up-short text-success"></i> En el sistema</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Evaluaciones -->
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_evaluaciones|default:"0" }}</div>
+                <div class="stat-label">Evaluaciones</div>
+                <div class="stat-meta"><i class="bi bi-calendar-check me-1"></i>{{ evaluaciones_mes|default:"0" }} este mes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- En Rehabilitación -->
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon teal">
+                <i class="bi bi-heart-pulse-fill"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ en_rehabilitacion|default:"0" }}</div>
+                <div class="stat-label">En Rehabilitación</div>
+                <div class="stat-meta"><i class="bi bi-activity me-1"></i> En proceso</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Riesgo Promedio / Usuarios activos -->
+    {% if user.rol and user.rol.nombre == 'administrador' %}
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon sky">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_usuarios|default:"0" }}</div>
+                <div class="stat-label">Usuarios Activos</div>
+                <div class="stat-meta">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>
+                    {{ intentos_fallidos_24h|default:"0" }} intentos fallidos (24h)
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif user.rol and user.rol.nombre == 'psicologo' %}
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="bi bi-person-lines-fill"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ mis_pacientes|default:"0" }}</div>
+                <div class="stat-label">Mis Pacientes</div>
+                <div class="stat-meta">
+                    <i class="bi bi-hourglass-split me-1"></i>
+                    {{ evaluaciones_pendientes|default:"0" }} pendientes
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ promedio_riesgo|default:"N/A" }}</div>
+                <div class="stat-label">Riesgo Promedio</div>
+                <div class="stat-meta"><i class="bi bi-bar-chart me-1"></i> Calificación global</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<!-- ===== ALERTAS IA ===== -->
+{% if criticos > 0 %}
+<div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade-in-up" role="alert">
+  <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0"></i>
+  <div>
+    <strong>⚠️ Alerta IA:</strong> Hay <strong>{{ criticos }}</strong> interno{{ criticos|pluralize }} con nivel de riesgo <strong>CRÍTICO</strong>.
+    <a href="{% url 'ia:lista' %}?nivel=critico" class="alert-link ms-2">Ver predicciones →</a>
+  </div>
+</div>
+{% endif %}
+
+<!-- ===== MÉTRICAS IA ===== -->
+<div class="row g-3 mb-4 fade-in-up">
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#1e3a8a,#3b5fc0);color:white">
+      <div class="card-body py-3">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-cpu-fill fs-2 opacity-75"></i>
+          <div>
+            <div class="fs-3 fw-bold">{{ predicciones_total|default:"0" }}</div>
+            <div class="small opacity-80">Predicciones IA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-danger text-white">
+      <div class="card-body py-3">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-exclamation-triangle-fill fs-2 opacity-75"></i>
+          <div>
+            <div class="fs-3 fw-bold">{{ criticos|default:"0" }}</div>
+            <div class="small opacity-80">Riesgo Crítico</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-warning text-dark">
+      <div class="card-body py-3">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-exclamation-circle-fill fs-2 opacity-50"></i>
+          <div>
+            <div class="fs-3 fw-bold">{{ altos|default:"0" }}</div>
+            <div class="small opacity-75">Riesgo Alto</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-success text-white">
+      <div class="card-body py-3 d-flex align-items-center">
+        <a href="{% url 'ia:analizar' %}" class="btn btn-light btn-sm w-100 fw-semibold">
+          <i class="bi bi-cpu me-2"></i>Nuevo Análisis IA
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GRÁFICOS ===== -->
+<div class="row g-4 mb-4">
+    <!-- Evaluaciones por mes -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-bar-chart-line me-2 text-primary"></i>Evaluaciones por Mes (últimos 6 meses)</span>
+                <span class="badge bg-primary-subtle text-primary rounded-pill" style="background:#dbeafe!important; color:#1e3a8a!important; font-size:11px;">
+                    Total: {{ total_evaluaciones|default:"0" }}
+                </span>
+            </div>
+            <div class="card-body chart-card">
+                <canvas id="chartEvaluaciones"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Internos por estado -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pie-chart me-2 text-secondary"></i>Internos por Estado
+            </div>
+            <div class="card-body chart-card d-flex align-items-center justify-content-center">
+                {% if total_internos > 0 %}
+                <canvas id="chartInternos"></canvas>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-person-badge"></i>
+                    <p>No hay internos registrados</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TABLAS DE ACTIVIDAD ===== -->
+<div class="row g-4">
+    <!-- Últimas evaluaciones -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-clipboard2-check me-2 text-success"></i>Últimas Evaluaciones</span>
+                <a href="{% url 'evaluaciones:lista' %}" class="btn btn-sm btn-outline-primary rounded-3" style="font-size:12px;">
+                    Ver todas <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if ultimas_evaluaciones %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Evaluación</th>
+                                <th>Interno</th>
+                                <th>Riesgo</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody class="activity-row">
+                            {% for ev in ultimas_evaluaciones %}
+                            <tr>
+                                <td class="fw-500">{{ ev.titulo|truncatechars:30 }}</td>
+                                <td>
+                                    {% if ev.interno %}
+                                    <span class="text-muted">{{ ev.interno.nombre }} {{ ev.interno.apellido }}</span>
+                                    {% else %}
+                                    <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ev.nivel_riesgo %}
+                                    <span class="badge badge-status risk-badge-{{ ev.nivel_riesgo }}">
+                                        {{ ev.get_nivel_riesgo_display }}
+                                    </span>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td class="text-muted">{{ ev.fecha_creacion|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-clipboard2-x"></i>
+                    <p>No hay evaluaciones completadas</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimos internos + Logs de auditoría -->
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-person-plus me-2 text-primary"></i>Últimos Internos</span>
+                <a href="{% url 'internos:lista' %}" class="btn btn-sm btn-outline-primary rounded-3" style="font-size:12px;">
+                    Ver todos <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if ultimos_internos %}
+                <ul class="list-group list-group-flush">
+                    {% for interno in ultimos_internos %}
+                    <li class="list-group-item d-flex align-items-center gap-3 px-4 py-3">
+                        <div style="width:36px;height:36px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-person-fill" style="color:#1e3a8a;font-size:16px;"></i>
+                        </div>
+                        <div class="flex-1" style="min-width:0;">
+                            <div style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                {{ interno.apellido }}, {{ interno.nombre }}
+                            </div>
+                            <div style="font-size:11.5px;color:var(--text-muted);">
+                                {{ interno.cedula }} — {{ interno.get_estado_display }}
+                            </div>
+                        </div>
+                        <span class="badge rounded-pill
+                            {% if interno.estado == 'procesado' %}bg-warning text-dark
+                            {% elif interno.estado == 'condenado' %}bg-danger
+                            {% elif interno.estado == 'liberado' %}bg-success
+                            {% else %}bg-secondary{% endif %}"
+                            style="font-size:10.5px;">
+                            {{ interno.get_estado_display }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-person-badge"></i>
+                    <p>No hay internos registrados</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-fill me-2 text-warning"></i>Accesos Rápidos</div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'internos:lista' %}" class="btn btn-outline-primary btn-sm rounded-3 text-start">
+                        <i class="bi bi-person-badge-fill me-2"></i>Gestionar Internos
+                    </a>
+                    <a href="{% url 'evaluaciones:lista' %}" class="btn btn-outline-success btn-sm rounded-3 text-start">
+                        <i class="bi bi-clipboard2-plus me-2"></i>Nueva Evaluación
+                    </a>
+                    <a href="{% url 'rehabilitacion:programa-list' %}" class="btn btn-outline-info btn-sm rounded-3 text-start">
+                        <i class="bi bi-heart-pulse me-2"></i>Programas de Rehabilitación
+                    </a>
+                    <a href="{% url 'reportes:lista' %}" class="btn btn-outline-secondary btn-sm rounded-3 text-start">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generar Reporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ===== Datos de gráficos desde el contexto Django =====
+const dataEvaluaciones = {{ chart_evaluaciones_mes|safe }};
+const dataInternos     = {{ chart_internos_estado|safe }};
+
+// ===== Gráfico: Evaluaciones por mes =====
+const ctxEval = document.getElementById('chartEvaluaciones');
+if (ctxEval) {
+    new Chart(ctxEval, {
+        type: 'bar',
+        data: {
+            labels: dataEvaluaciones.labels,
+            datasets: [{
+                label: 'Evaluaciones completadas',
+                data: dataEvaluaciones.data,
+                backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                borderColor: '#1e3a8a',
+                borderWidth: 2,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#0f172a',
+                    padding: 10,
+                    cornerRadius: 8,
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 13, weight: '600' },
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: { font: { size: 11 }, stepSize: 1 }
+                }
+            }
+        }
+    });
+}
+
+// ===== Gráfico: Internos por estado =====
+const ctxInt = document.getElementById('chartInternos');
+if (ctxInt && dataInternos.data && dataInternos.data.length > 0) {
+    new Chart(ctxInt, {
+        type: 'doughnut',
+        data: {
+            labels: dataInternos.labels,
+            datasets: [{
+                data: dataInternos.data,
+                backgroundColor: dataInternos.backgroundColor || [
+                    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'
+                ],
+                borderWidth: 0,
+                hoverBorderWidth: 2,
+                hoverBorderColor: '#ffffff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { font: { size: 11 }, padding: 14, usePointStyle: true }
+                },
+                tooltip: {
+                    backgroundColor: '#0f172a',
+                    padding: 10,
+                    cornerRadius: 8,
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

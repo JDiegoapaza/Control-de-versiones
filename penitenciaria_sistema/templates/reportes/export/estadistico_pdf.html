@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>{{ datos.titulo }}</title>
+<style>body{font-family:Arial,sans-serif;font-size:10px;color:#1f2937}h1{font-size:15px;color:#1e3a8a;border-bottom:2px solid #1e3a8a;padding-bottom:5px}h2{font-size:11px;color:#1e3a8a;margin:10px 0 5px}.meta{color:#6b7280;font-size:9px;margin-bottom:8px}.stat{display:inline-block;border:1px solid #ddd;border-radius:3px;padding:10px 16px;margin:4px;text-align:center;min-width:90px}.stat-n{font-size:22px;font-weight:bold;color:#1e3a8a}.stat-l{font-size:9px;color:#6b7280}table{width:100%;border-collapse:collapse;margin-bottom:10px}th{background:#1e3a8a;color:white;padding:5px 6px;text-align:left;font-size:9px}td{padding:4px 6px;border-bottom:1px solid #eee;font-size:9px}tr:nth-child(even) td{background:#f9fafb}.footer{margin-top:12px;border-top:1px solid #eee;padding-top:4px;color:#9ca3af;font-size:8px}</style>
+</head><body>
+<h1>{{ datos.titulo }}</h1><div class="meta">Generado: {{ datos.generado }} | Sistema SGEP</div>
+<h2>Resumen Global del Sistema</h2>
+<div>
+  <div class="stat"><div class="stat-n">{{ datos.internos|default:"0" }}</div><div class="stat-l">Internos Activos</div></div>
+  <div class="stat"><div class="stat-n">{{ datos.evaluaciones|default:"0" }}</div><div class="stat-l">Evaluaciones</div></div>
+  <div class="stat"><div class="stat-n">{{ datos.rehabilitaciones|default:"0" }}</div><div class="stat-l">Rehabilitaciones</div></div>
+  <div class="stat"><div class="stat-n">{{ datos.predicciones_ia|default:"0" }}</div><div class="stat-l">Predicciones IA</div></div>
+  {% if datos.criticos %}<div class="stat"><div class="stat-n" style="color:#b91c1c">{{ datos.criticos }}</div><div class="stat-l">Riesgo Crítico</div></div>{% endif %}
+</div>
+{% if datos.internos_por_estado %}
+<h2>Internos por Estado</h2>
+<table><thead><tr><th>Estado</th><th>Total</th></tr></thead>
+<tbody>{% for item in datos.internos_por_estado %}<tr><td>{{ item.estado|capfirst }}</td><td>{{ item.n }}</td></tr>{% endfor %}</tbody></table>
+{% endif %}
+{% if datos.evaluaciones_por_nivel %}
+<h2>Evaluaciones por Nivel de Riesgo</h2>
+<table><thead><tr><th>Nivel</th><th>Total</th></tr></thead>
+<tbody>{% for item in datos.evaluaciones_por_nivel %}<tr><td>{{ item.nivel_riesgo|capfirst }}</td><td>{{ item.n }}</td></tr>{% endfor %}</tbody></table>
+{% endif %}
+<div class="footer">SGEP — Documento generado automáticamente. Confidencial.</div>
+</body></html>

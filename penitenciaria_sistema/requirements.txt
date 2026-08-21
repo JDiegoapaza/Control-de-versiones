@@ -1,0 +1,46 @@
+# ==============================
+# SGEP — Sistema de Gestión de Evaluaciones Psicológicas en Centros Penitenciarios
+# ==============================
+
+# Framework principal
+Django==4.2.16
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+
+# Filtros y CORS
+django-filter==23.5
+django-cors-headers==4.3.1
+django-extensions==3.2.3
+
+# Base de datos
+# psycopg2-binary==2.9.9  # Descomentar para PostgreSQL en producción
+
+# Seguridad
+argon2-cffi==23.1.0
+
+# Utilidades
+python-decouple==3.8
+gunicorn==21.2.0
+
+# ==============================
+# Reportes — exportación PDF y Excel
+# ==============================
+openpyxl==3.1.2             # Exportación .xlsx real
+xhtml2pdf==0.2.16           # Exportación PDF (requiere reportlab)
+reportlab==4.2.2            # Motor PDF (dependencia de xhtml2pdf)
+
+# ==============================
+# FUTURO: Machine Learning (descomentear cuando esté listo)
+# ==============================
+# scikit-learn>=1.3.0
+# pandas>=2.0.0
+# numpy>=1.24.0
+# joblib>=1.3.0
+# matplotlib>=3.7.0
+# seaborn>=0.12.0
+
+# ==============================
+# Desarrollo
+# ==============================
+# Faker==22.0.0
+# pytest-django==4.8.0

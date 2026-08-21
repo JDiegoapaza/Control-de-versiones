@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Nuevo Reporte{% endblock %}
+{% block page_title %}Nuevo Reporte{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'reportes:lista' %}">Reportes</a></li>
+<li class="breadcrumb-item active">Nuevo</li>
+{% endblock %}
+
+
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <!-- Info -->
+    <div class="card border-0 mb-4" style="background:linear-gradient(135deg,#1e3a8a,#3b5fc0);color:white">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-2"><i class="bi bi-file-earmark-bar-graph me-2"></i>Sistema de Reportes SGEP</h5>
+        <p class="mb-0 opacity-90 small">
+          Seleccione el tipo de reporte. Una vez generado, podrá descargarlo como
+          <strong>PDF</strong>, <strong>Excel (.xlsx)</strong>, <strong>CSV</strong> o <strong>JSON</strong>
+          directamente desde el detalle.
+        </p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-plus-circle me-2 text-primary"></i>Configurar Reporte</h5>
+      </div>
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
+            <input type="text" name="titulo" class="form-control form-control-lg" required
+              value="{{ form_data.titulo|default:'' }}"
+              placeholder="Ej: Reporte mensual de evaluaciones — Mayo 2026">
+            <div class="form-text">Un nombre descriptivo para identificar este reporte.</div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Tipo de Reporte <span class="text-danger">*</span></label>
+            <div class="row g-3">
+              {% for val, label in tipos %}
+              <div class="col-md-6">
+                <label class="card p-3 border rounded-3 cursor-pointer {% if forloop.first %}border-primary bg-primary-subtle{% endif %}" style="cursor:pointer"
+                  id="card-{{ val }}">
+                  <div class="d-flex align-items-center gap-3">
+                    <input type="radio" name="tipo" value="{{ val }}"
+                      class="form-check-input flex-shrink-0" style="width:18px;height:18px"
+                      {% if form_data.tipo == val or forloop.first and not form_data.tipo %}checked{% endif %}
+                      onchange="selectTipo(this)">
+                    <div>
+                      <div class="fw-semibold small">
+                        {% if val == 'internos' %}<i class="bi bi-person-badge-fill text-primary me-1"></i>
+                        {% elif val == 'evaluaciones' %}<i class="bi bi-clipboard2-pulse-fill text-success me-1"></i>
+                        {% elif val == 'rehabilitacion' %}<i class="bi bi-heart-pulse-fill text-info me-1"></i>
+                        {% elif val == 'auditoria' %}<i class="bi bi-shield-check-fill text-warning me-1"></i>
+                        {% elif val == 'estadistico' %}<i class="bi bi-bar-chart-fill text-secondary me-1"></i>
+                        {% elif val == 'ia_predictiva' %}<i class="bi bi-cpu-fill text-danger me-1"></i>
+                        {% endif %}
+                        {{ label }}
+                      </div>
+                      <div class="text-muted" style="font-size:11px">
+                        {% if val == 'internos' %}Lista y estadísticas de todos los internos
+                        {% elif val == 'evaluaciones' %}Evaluaciones psicológicas y niveles de riesgo
+                        {% elif val == 'rehabilitacion' %}Programas y progreso de rehabilitación
+                        {% elif val == 'auditoria' %}Logs de eventos de seguridad ISO 27001
+                        {% elif val == 'estadistico' %}Resumen global del sistema
+                        {% elif val == 'ia_predictiva' %}Predicciones de riesgo del motor IA
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'reportes:lista' %}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i>Volver
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg" id="btn-submit">
+              <i class="bi bi-gear me-2"></i>Generar Reporte
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectTipo(radio) {
+  document.querySelectorAll('[id^="card-"]').forEach(c => {
+    c.classList.remove('border-primary', 'bg-primary-subtle');
+    c.classList.add('border');
+  });
+  const card = document.getElementById('card-' + radio.value);
+  if (card) {
+    card.classList.add('border-primary', 'bg-primary-subtle');
+  }
+}
+
+document.getElementById('btn-submit').addEventListener('click', function() {
+  this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generando...';
+  this.disabled = true;
+  this.closest('form').submit();
+});
+</script>
+{% endblock %}

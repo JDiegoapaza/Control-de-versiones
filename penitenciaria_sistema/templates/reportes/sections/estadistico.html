@@ -1,0 +1,89 @@
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card stat-pill border-0 shadow-sm text-center"><div class="fs-1 fw-black text-primary">{{ datos.internos|default:"0" }}</div><div class="text-muted small">Internos Activos</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-pill border-0 shadow-sm text-center"><div class="fs-2 fw-bold text-success">{{ datos.evaluaciones|default:"0" }}</div><div class="text-muted small">Evaluaciones</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-pill border-0 shadow-sm text-center"><div class="fs-2 fw-bold text-info">{{ datos.rehabilitaciones|default:"0" }}</div><div class="text-muted small">Rehabilitaciones</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-pill border-0 shadow-sm text-center"><div class="fs-2 fw-bold" style="color:#7c3aed">{{ datos.predicciones_ia|default:"0" }}</div><div class="text-muted small">Predicciones IA</div></div></div>
+</div>
+
+<div class="row g-4">
+  {% if datos.internos_por_estado %}
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-person-badge me-2"></i>Internos por Estado</h6></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Estado</th><th class="text-end">Total</th></tr></thead>
+          <tbody>
+            {% for item in datos.internos_por_estado %}
+            <tr>
+              <td>
+                {% if item.estado == 'procesado' %}<span class="badge bg-warning text-dark">Procesado</span>
+                {% elif item.estado == 'condenado' %}<span class="badge bg-danger">Condenado</span>
+                {% elif item.estado == 'liberado' %}<span class="badge bg-success">Liberado</span>
+                {% else %}<span class="badge bg-secondary">{{ item.estado|capfirst }}</span>{% endif %}
+              </td>
+              <td class="text-end fw-semibold">{{ item.n }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if datos.evaluaciones_por_nivel %}
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-clipboard2-pulse me-2"></i>Evaluaciones por Nivel</h6></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Nivel</th><th class="text-end">Total</th></tr></thead>
+          <tbody>
+            {% for item in datos.evaluaciones_por_nivel %}
+            <tr>
+              <td><span class="badge badge-nivel-{{ item.nivel_riesgo }}">{{ item.nivel_riesgo|capfirst }}</span></td>
+              <td class="text-end fw-semibold">{{ item.n }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if datos.ia_por_nivel %}
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-cpu me-2"></i>IA: Predicciones por Nivel</h6></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Nivel</th><th class="text-end">Total</th></tr></thead>
+          <tbody>
+            {% for item in datos.ia_por_nivel %}
+            <tr>
+              <td><span class="badge badge-nivel-{{ item.nivel_riesgo }}">{{ item.nivel_riesgo|capfirst }}</span></td>
+              <td class="text-end fw-semibold">{{ item.n }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if datos.promedio_riesgo %}
+  <div class="col-12">
+    <div class="alert alert-info mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Promedio de calificación de riesgo en evaluaciones completadas:
+      <strong>{{ datos.promedio_riesgo }}%</strong>
+      &nbsp;|&nbsp; Predicciones críticas: <strong>{{ datos.criticos|default:"0" }}</strong>
+      &nbsp;|&nbsp; Evaluaciones completadas: <strong>{{ datos.evaluaciones_completadas|default:"0" }}</strong>
+      &nbsp;|&nbsp; Rehabilitaciones completadas: <strong>{{ datos.rehabilitaciones_completadas|default:"0" }}</strong>
+    </div>
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}{{ interno.nombre_completo }}{% endblock %}
+{% block page_title %}Detalle del Interno{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'internos:lista' %}">Internos</a></li>
+<li class="breadcrumb-item active">{{ interno.apellido }}, {{ interno.nombre }}</li>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body text-center py-4">
+        <div class="display-4 fw-bold text-primary mb-2">{{ interno.nombre|first }}{{ interno.apellido|first }}</div>
+        <h4 class="fw-bold mb-1">{{ interno.apellido }}, {{ interno.nombre }}</h4>
+        <p class="text-muted mb-3"><code>{{ interno.cedula }}</code></p>
+        {% if interno.estado == 'procesado' %}<span class="badge bg-warning text-dark fs-6 px-3 py-2">Procesado</span>
+        {% elif interno.estado == 'condenado' %}<span class="badge bg-danger fs-6 px-3 py-2">Condenado</span>
+        {% elif interno.estado == 'liberado' %}<span class="badge bg-success fs-6 px-3 py-2">Liberado</span>
+        {% else %}<span class="badge bg-secondary fs-6 px-3 py-2">{{ interno.get_estado_display }}</span>{% endif %}
+      </div>
+      <div class="card-footer bg-white">
+        <div class="d-flex gap-2 justify-content-center">
+          <a href="{% url 'internos:editar' interno.pk %}" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Editar</a>
+          <a href="{% url 'ia:analizar' %}?interno={{ interno.pk }}" class="btn btn-sm btn-outline-info"><i class="bi bi-cpu me-1"></i>Analizar IA</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Datos Personales y Legales</h6></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><small class="text-muted d-block">Sexo</small><strong>{{ interno.get_sexo_display }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Fecha de Nacimiento</small><strong>{{ interno.fecha_nacimiento|date:"d/m/Y"|default:"—" }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Delito</small><strong>{{ interno.delito|default:"—" }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Centro Penitenciario</small><strong>{{ interno.centro_penitenciario|default:"—" }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Celda</small><strong>{{ interno.celda|default:"—" }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Fecha de Ingreso</small><strong>{{ interno.fecha_ingreso|date:"d/m/Y H:i" }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Liberación Prevista</small><strong>{{ interno.fecha_liberacion_prevista|date:"d/m/Y"|default:"—" }}</strong></div>
+          <div class="col-12"><small class="text-muted d-block">Observaciones</small><p class="mb-0">{{ interno.observaciones|default:"Sin observaciones." }}</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evaluaciones recientes -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-clipboard2-pulse me-2"></i>Evaluaciones Recientes</h6>
+        <a href="{% url 'evaluaciones:crear' %}?interno={{ interno.pk }}" class="btn btn-sm btn-outline-primary">+ Nueva</a>
+      </div>
+      <div class="card-body p-0">
+        {% if evaluaciones %}
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Título</th><th>Estado</th><th>Riesgo</th><th>Fecha</th></tr></thead>
+          <tbody>
+            {% for ev in evaluaciones %}
+            <tr>
+              <td><a href="{% url 'evaluaciones:detalle' ev.pk %}">{{ ev.titulo }}</a></td>
+              <td>{{ ev.get_estado_display }}</td>
+              <td>{% if ev.nivel_riesgo %}<span class="badge bg-{% if ev.nivel_riesgo == 'bajo' %}success{% elif ev.nivel_riesgo == 'medio' %}warning text-dark{% elif ev.nivel_riesgo == 'alto' %}danger{% else %}dark{% endif %}">{{ ev.get_nivel_riesgo_display }}</span>{% else %}—{% endif %}</td>
+              <td><small>{{ ev.fecha_creacion|date:"d/m/Y" }}</small></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted text-center py-3 mb-0">Sin evaluaciones registradas.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Predicciones IA -->
+    {% if predicciones %}
+    <div class="card shadow-sm">
+      <div class="card-header"><h6 class="mb-0"><i class="bi bi-cpu me-2"></i>Últimas Predicciones IA</h6></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>Nivel de Riesgo</th><th>Score</th><th>Confianza</th><th>Fecha</th><th></th></tr></thead>
+          <tbody>
+            {% for p in predicciones %}
+            <tr>
+              <td><span class="badge bg-{% if p.nivel_riesgo == 'bajo' %}success{% elif p.nivel_riesgo == 'medio' %}warning text-dark{% elif p.nivel_riesgo == 'alto' %}danger{% else %}dark{% endif %}">{{ p.get_nivel_riesgo_display }}</span></td>
+              <td>{{ p.score|floatformat:2 }}</td>
+              <td>{{ p.confianza|floatformat:0 }}%</td>
+              <td><small>{{ p.fecha_prediccion|date:"d/m/Y" }}</small></td>
+              <td><a href="{% url 'ia:detalle' p.pk %}" class="btn btn-xs btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="mt-3">
+  <a href="{% url 'internos:lista' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver a lista</a>
+</div>
+{% endblock %}

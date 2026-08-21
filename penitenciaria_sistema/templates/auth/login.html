@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistema de Evaluaciones Psicológicas - Centro Penitenciario</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google reCAPTCHA v2 — V3.1 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* ===== Variables de Color ===== */
+        :root {
+            --primary: #1e3a8a;        /* Azul institucional */
+            --secondary: #0f766e;      /* Verde oscuro */
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #ea580c;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        /* ===== Body y Fondo ===== */
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Elemento decorativo de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* ===== Contenedor Principal ===== */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+        
+        /* ===== Card de Login ===== */
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== Header del Card ===== */
+        .login-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        .login-header .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .login-header .logo i {
+            font-size: 40px;
+            color: var(--primary);
+        }
+        
+        .login-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        
+        .login-header p {
+            font-size: 13px;
+            margin: 8px 0 0 0;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        /* ===== Body del Card ===== */
+        .login-body {
+            padding: 40px 30px;
+        }
+        
+        /* ===== Alertas ===== */
+        .alert {
+            border: none;
+            border-radius: 8px;
+            border-left: 4px solid;
+            animation: slideDown 0.3s ease-out;
+            margin-bottom: 25px;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-danger {
+            background-color: #fee2e2;
+            border-left-color: var(--danger);
+            color: #991b1b;
+        }
+        
+        .alert-success {
+            background-color: #dcfce7;
+            border-left-color: var(--success);
+            color: #15803d;
+        }
+        
+        .alert i {
+            margin-right: 8px;
+        }
+        
+        /* ===== Labels ===== */
+        label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        /* ===== Input Fields ===== */
+        .form-control, .form-select {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            outline: none;
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        /* ===== Password Toggle ===== */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+        
+        .form-password-wrapper {
+            position: relative;
+        }
+        
+        /* ===== Botón Login ===== */
+        .btn-login {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* ===== Footer del Card ===== */
+        .login-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .login-footer a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+        
+        /* ===== Spinner de Carga ===== */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 8px;
+        }
+        
+        /* ===== Responsive ===== */
+        @media (max-width: 576px) {
+            .login-container {
+                max-width: 100%;
+            }
+            
+            .login-header {
+                padding: 30px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 20px;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
+            
+            .login-footer {
+                padding: 15px 20px;
+            }
+        }
+        
+        /* ===== Accesibilidad ===== */
+        .form-control:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        .btn-login:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>Centro Penitenciario</h1>
+                <p>Sistema de Evaluaciones Psicológicas</p>
+            </div>
+            
+            <!-- Body -->
+            <div class="login-body">
+                
+                <!-- Mensajes de Error -->
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Error:</strong> {{ error }}
+                </div>
+                {% endif %}
+                
+                <!-- Mensajes de Éxito -->
+                {% if success and mensaje %}
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Éxito:</strong> {{ mensaje }}
+                </div>
+                {% elif mensaje %}
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle"></i>
+                    {{ mensaje }}
+                </div>
+                {% endif %}
+                
+                <!-- Formulario de Login -->
+                <form method="POST" action="{% url 'auth:login' %}" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <!-- Usuario -->
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i> Usuario o Email
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username"
+                            name="username" 
+                            placeholder="Ingrese su usuario o email"
+                            value="{{ username }}"
+                            required
+                            autocomplete="username"
+                            aria-label="Usuario o Email">
+                    </div>
+                    
+                    <!-- Contraseña -->
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                        <div class="form-password-wrapper">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password"
+                                name="password" 
+                                placeholder="Ingrese su contraseña"
+                                required
+                                autocomplete="current-password"
+                                aria-label="Contraseña">
+                            <span class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Google reCAPTCHA v2 Checkbox — V3.1 -->
+                    <div class="form-group">
+                        <div class="g-recaptcha"
+                             data-sitekey="{{ recaptcha_site_key }}"
+                             style="transform: scale(0.95); transform-origin: 0 0;">
+                        </div>
+                    </div>
+                    
+                    <!-- Botón Login -->
+                    <button 
+                        type="submit" 
+                        class="btn btn-login"
+                        id="loginBtn">
+                        <span id="btnText">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </span>
+                        <span id="spinner" class="spinner-border spinner-border-sm d-none" 
+                              role="status" aria-hidden="true"></span>
+                    </button>
+                </form>
+                
+                <!-- Información de Seguridad -->
+                <div style="
+                    background: #f0fdf4;
+                    border-left: 3px solid var(--success);
+                    padding: 12px 15px;
+                    border-radius: 6px;
+                    margin-top: 25px;
+                    font-size: 12px;
+                    color: #15803d;">
+                    <i class="fas fa-lock"></i>
+                    <strong>Seguro:</strong> Su conexión está encriptada (SSL/TLS).
+                    Nunca compartir sus credenciales.
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="login-footer">
+                <p style="margin: 0;">
+                    ¿Olvidó su contraseña?
+                    <a href="{% url 'auth:recuperar_password' %}">
+                        Recuperar aquí
+                    </a>
+                </p>
+                <p style="margin: 8px 0 0 0; font-size: 11px; color: #94a3b8;">
+                    Sistema desarrollado para Centro Penitenciario La Paz
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Manejar envío del formulario
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Mostrar spinner
+            btnText.classList.add('d-none');
+            spinner.classList.remove('d-none');
+            loginBtn.disabled = true;
+            
+            // El formulario se envía normalmente
+        });
+        
+        // Validación en cliente
+        document.getElementById('username').addEventListener('input', function() {
+            this.value = this.value.trim();
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            // No trimear contraseña
+        });
+        
+        // Auto-focus en usuario
+        window.addEventListener('load', function() {
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>

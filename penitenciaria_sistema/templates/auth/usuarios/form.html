@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block extra_head %}
+<style>
+.form-section { margin-bottom: 28px; }
+.form-section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin-bottom: 16px;
+}
+.field-error { color: var(--danger); font-size: 12px; margin-top: 4px; }
+.field-help  { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+/* Indicador de fortaleza de contraseña */
+#pwd-strength-bar { height: 4px; border-radius: 4px; transition: all 0.3s; }
+#pwd-strength-text { font-size: 11px; font-weight: 600; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block header_title %}{{ titulo }}{% endblock %}
+{% block header_subtitle %}
+    {% if accion == 'Crear' %}Nuevo usuario del sistema SGEP{% else %}Modificar datos del usuario{% endif %}
+{% endblock %}
+{% block header_actions %}
+    <a href="{% url 'auth:usuarios_lista' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-person-{% if accion == 'Crear' %}plus{% else %}gear{% endif %}-fill me-2"></i>
+        {{ titulo }}
+    </div>
+    <div class="card-body">
+
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <!-- Errores globales -->
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                <div><i class="bi bi-exclamation-octagon me-1"></i>{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Sección: Identidad -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="bi bi-person me-1"></i>Identidad</div>
+                <div class="row g-3">
+                    {% if accion == 'Crear' %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Usuario (login) *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <div class="field-error">{% for e in form.username.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Nombre *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div class="field-error">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Apellido *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div class="field-error">{% for e in form.last_name.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="field-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Cédula</label>
+                        {{ form.cedula }}
+                        {% if form.cedula.errors %}
+                        <div class="field-error">{% for e in form.cedula.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Rol y Centro -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="bi bi-shield me-1"></i>Rol y asignación</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Rol *</label>
+                        {{ form.rol }}
+                        {% if form.rol.errors %}
+                        <div class="field-error">{% for e in form.rol.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Teléfono</label>
+                        {{ form.telefono }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Especialidad</label>
+                        {{ form.especialidad }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Centro penitenciario</label>
+                        {{ form.centro_penitenciario }}
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ form.activo }}
+                            <label class="form-check-label fw-600" style="font-size:13px;">
+                                Usuario activo (puede iniciar sesión)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Contraseña (solo en creación) -->
+            {% if accion == 'Crear' %}
+            <div class="form-section">
+                <div class="form-section-title"><i class="bi bi-lock me-1"></i>Contraseña</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Contraseña *</label>
+                        {{ form.password1 }}
+                        <div id="pwd-strength-bar" style="background:#e2e8f0;"></div>
+                        <div id="pwd-strength-text" style="color:var(--text-muted);"></div>
+                        {% if form.password1.errors %}
+                        <div class="field-error">{% for e in form.password1.errors %}{{ e }}<br>{% endfor %}</div>
+                        {% endif %}
+                        <div class="field-help">{{ form.password1.help_text }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600" style="font-size:13px;">Confirmar contraseña *</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                        <div class="field-error">{% for e in form.password2.errors %}{{ e }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <div style="background:#f0f9ff; border-left:3px solid var(--info);
+                                    padding:10px 14px; border-radius:6px; font-size:12px; color:#075985;">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Política de contraseña:</strong>
+                            Mínimo 12 caracteres · Al menos una mayúscula · Una minúscula ·
+                            Un número · Un carácter especial (!@#$%^&*…)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 justify-content-end border-top pt-4 mt-2">
+                <a href="{% url 'auth:usuarios_lista' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i> {{ accion }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Indicador de fortaleza de contraseña (cliente)
+const pwdInput  = document.getElementById('id_password1');
+const bar       = document.getElementById('pwd-strength-bar');
+const text      = document.getElementById('pwd-strength-text');
+
+if (pwdInput) {
+    pwdInput.addEventListener('input', () => {
+        const v = pwdInput.value;
+        let score = 0;
+        if (v.length >= 12)                        score++;
+        if (/[A-Z]/.test(v))                       score++;
+        if (/[a-z]/.test(v))                       score++;
+        if (/[0-9]/.test(v))                       score++;
+        if (/[!@#$%^&*()\-_=+\[\]{}|;:,.<>?]/.test(v)) score++;
+
+        const colors = ['#dc2626','#ea580c','#d97706','#16a34a','#0f766e'];
+        const labels = ['Muy débil','Débil','Regular','Fuerte','Muy fuerte'];
+        bar.style.width  = (score * 20) + '%';
+        bar.style.background = colors[score - 1] || '#e2e8f0';
+        text.textContent = score > 0 ? labels[score - 1] : '';
+        text.style.color = colors[score - 1] || 'var(--text-muted)';
+    });
+}
+</script>
+{% endblock %}

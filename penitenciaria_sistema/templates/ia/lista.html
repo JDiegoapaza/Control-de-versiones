@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}IA - Predicciones{% endblock %}
+{% block page_title %}Módulo de Inteligencia Artificial{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">IA / Predicciones</li>{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6 col-lg-3">
+    <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#1e3a8a,#3b5fc0);color:white">
+      <div class="card-body"><small class="opacity-75">Total Predicciones</small><div class="fs-2 fw-bold">{{ stats.total }}</div></div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-danger text-white">
+      <div class="card-body"><small class="opacity-75">Riesgo Crítico</small><div class="fs-2 fw-bold">{{ stats.critico }}</div></div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-warning text-dark">
+      <div class="card-body"><small class="opacity-50">Riesgo Alto</small><div class="fs-2 fw-bold">{{ stats.alto }}</div></div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="card border-0 shadow-sm bg-success text-white">
+      <div class="card-body"><small class="opacity-75">Riesgo Bajo</small><div class="fs-2 fw-bold">{{ stats.bajo }}</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <form method="get" class="d-flex gap-2">
+    <select name="nivel" class="form-select" onchange="this.form.submit()">
+      <option value="">Todos los niveles</option>
+      {% for val, label in nivel_choices %}<option value="{{ val }}" {% if nivel_filter == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    {% if nivel_filter %}<a href="{% url 'ia:lista' %}" class="btn btn-outline-secondary">Limpiar</a>{% endif %}
+  </form>
+  <a href="{% url 'ia:analizar' %}" class="btn btn-primary"><i class="bi bi-cpu me-2"></i>Nuevo Análisis IA</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    {% if predicciones %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Interno</th><th>Nivel de Riesgo</th><th>Score</th><th>Confianza</th><th>Versión Modelo</th><th>Fecha</th><th class="text-end">Acciones</th></tr>
+        </thead>
+        <tbody>
+          {% for p in predicciones %}
+          <tr>
+            <td><a href="{% url 'internos:detalle' p.interno.pk %}">{{ p.interno.nombre_completo }}</a></td>
+            <td>
+              <span class="badge bg-{% if p.nivel_riesgo == 'bajo' %}success{% elif p.nivel_riesgo == 'medio' %}warning text-dark{% elif p.nivel_riesgo == 'alto' %}danger{% else %}dark{% endif %} fs-6 px-3">
+                <i class="bi bi-{% if p.nivel_riesgo == 'critico' %}exclamation-triangle{% elif p.nivel_riesgo == 'alto' %}exclamation-circle{% elif p.nivel_riesgo == 'medio' %}dash-circle{% else %}check-circle{% endif %} me-1"></i>
+                {{ p.get_nivel_riesgo_display }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress" style="width:80px;height:8px">
+                  <div class="progress-bar bg-{% if p.score < 0.25 %}success{% elif p.score < 0.5 %}warning{% elif p.score < 0.75 %}danger{% else %}dark{% endif %}" style="width:{{ p.score|floatformat:0 }}00%"></div>
+                </div>
+                <small>{{ p.score|floatformat:2 }}</small>
+              </div>
+            </td>
+            <td>{{ p.confianza|floatformat:0 }}%</td>
+            <td><code class="small">{{ p.modelo_version }}</code></td>
+            <td><small>{{ p.fecha_prediccion|date:"d/m/Y H:i" }}</small></td>
+            <td class="text-end"><a href="{% url 'ia:detalle' p.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Ver</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include 'partials/pagination.html' with page_obj=predicciones %}
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-cpu fs-1 d-block mb-3 opacity-25"></i>
+      <p>No hay predicciones registradas.</p>
+      <a href="{% url 'ia:analizar' %}" class="btn btn-primary mt-2">Realizar primer análisis</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

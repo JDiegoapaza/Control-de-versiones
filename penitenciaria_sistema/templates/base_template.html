@@ -1,0 +1,537 @@
+# templates/base.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block titulo %}Centro Penitenciario - Sistema de Evaluaciones{% endblock %}</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts.js para estadísticas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+    {% block css_extra %}{% endblock %}
+    
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0f766e;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #ea580c;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --border-color: #e2e8f0;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, #2c5282 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-header .logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: var(--primary);
+            font-size: 24px;
+        }
+        
+        .sidebar-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .sidebar-header small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+        }
+        
+        .sidebar-menu-item {
+            margin: 5px 10px;
+        }
+        
+        .sidebar-menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .sidebar-menu-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding-left: 20px;
+        }
+        
+        .sidebar-menu-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border-left: 3px solid white;
+        }
+        
+        .sidebar-menu-link i {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        
+        .sidebar-submenu {
+            list-style: none;
+            margin: 0;
+            padding-left: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .sidebar-menu-item.expanded .sidebar-submenu {
+            max-height: 500px;
+        }
+        
+        .sidebar-submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            margin: 3px 10px;
+        }
+        
+        .sidebar-submenu-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding-left: 20px;
+        }
+        
+        .sidebar-submenu-link.active {
+            color: white;
+            font-weight: 600;
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-left: 260px;
+            height: 70px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 999;
+        }
+        
+        .navbar-brand {
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .navbar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .navbar-item .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        
+        .navbar-item .user-dropdown:hover {
+            background: var(--light);
+        }
+        
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                margin-bottom: 20px;
+            }
+            
+            .navbar {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .sidebar-submenu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h4>Centro Penitenciario</h4>
+            <small>Sistema de Evaluaciones</small>
+        </div>
+        
+        <ul class="sidebar-menu">
+            {% comment %} Menú dinámico según el rol {% endcomment %}
+            
+            <!-- Dashboard -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'director' or user.rol.nombre == 'psicologo' or user.rol.nombre == 'auditoria' %}
+            <li class="sidebar-menu-item">
+                <a href="{% url 'dashboard:index' %}" class="sidebar-menu-link {% if request.resolver_match.app_names.0 == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            <!-- Gestión de Internos -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'psicologo' %}
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link" data-toggle="submenu">
+                    <i class="fas fa-users"></i>
+                    <span>Gestión de Internos</span>
+                    <i class="fas fa-chevron-right" style="margin-left: auto; font-size: 12px;"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{% url 'internos:lista' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-list"></i> Lista de Internos
+                    </a></li>
+                    <li><a href="{% url 'internos:crear' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-plus"></i> Registrar Interno
+                    </a></li>
+                    <li><a href="{% url 'internos:lista' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-search"></i> Buscar
+                    </a></li>
+                </ul>
+            </li>
+            {% endif %}
+            
+            <!-- Evaluaciones Psicológicas -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'psicologo' %}
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link" data-toggle="submenu">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Evaluaciones</span>
+                    <i class="fas fa-chevron-right" style="margin-left: auto; font-size: 12px;"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{% url 'evaluaciones:lista' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-list"></i> Mis Evaluaciones
+                    </a></li>
+                    <li><a href="{% url 'evaluaciones:crear' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-plus"></i> Nueva Evaluación
+                    </a></li>
+                    <li><a href="{% url 'evaluaciones:historial' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-history"></i> Historial
+                    </a></li>
+                </ul>
+            </li>
+            {% endif %}
+            
+            <!-- Rehabilitación -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'psicologo' %}
+            <li class="sidebar-menu-item">
+                <a href="{% url 'rehabilitacion:seguimiento' %}" class="sidebar-menu-link">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Rehabilitación</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            <!-- Inteligencia Artificial -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'psicologo' %}
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link" data-toggle="submenu">
+                    <i class="fas fa-brain"></i>
+                    <span>Análisis IA</span>
+                    <i class="fas fa-chevron-right" style="margin-left: auto; font-size: 12px;"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{% url 'ia:analisis' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-chart-line"></i> Análisis
+                    </a></li>
+                    <li><a href="{% url 'ia:indicadores' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-indicators"></i> Indicadores
+                    </a></li>
+                    <li><a href="{% url 'ia:riesgo' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-exclamation-triangle"></i> Riesgo
+                    </a></li>
+                </ul>
+            </li>
+            {% endif %}
+            
+            <!-- Reportes -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'psicologo' or user.rol.nombre == 'director' %}
+            <li class="sidebar-menu-item">
+                <a href="{% url 'reportes:lista' %}" class="sidebar-menu-link">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Reportes</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            <!-- Divisor -->
+            {% if user.rol.nombre == 'administrador' or user.rol.nombre == 'auditoria' %}
+            <li style="border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0; padding: 10px 0;"></li>
+            {% endif %}
+            
+            <!-- Seguridad (Solo Administrador) -->
+            {% if user.rol.nombre == 'administrador' %}
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link" data-toggle="submenu">
+                    <i class="fas fa-lock"></i>
+                    <span>Seguridad</span>
+                    <i class="fas fa-chevron-right" style="margin-left: auto; font-size: 12px;"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{% url 'seguridad:usuarios' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-user-tie"></i> Usuarios
+                    </a></li>
+                    <li><a href="{% url 'seguridad:roles' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-user-shield"></i> Roles
+                    </a></li>
+                    <li><a href="{% url 'seguridad:permisos' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-key"></i> Permisos
+                    </a></li>
+                    <li><a href="{% url 'seguridad:auditoria' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-clipboard-list"></i> Auditoría
+                    </a></li>
+                    <li><a href="{% url 'seguridad:logs' %}" class="sidebar-submenu-link">
+                        <i class="fas fa-server"></i> Logs
+                    </a></li>
+                </ul>
+            </li>
+            {% endif %}
+            
+            <!-- Auditoría (Solo Auditoria) -->
+            {% if user.rol.nombre == 'auditoria' %}
+            <li class="sidebar-menu-item">
+                <a href="{% url 'seguridad:auditoria' %}" class="sidebar-menu-link">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Auditoría</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </aside>
+    
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h5 class="navbar-brand">{% block navbar_titulo %}Bienvenida{% endblock %}</h5>
+        
+        <div class="navbar-item">
+            <!-- Notificaciones -->
+            <div style="cursor: pointer; position: relative;">
+                <i class="fas fa-bell" style="font-size: 18px; color: #64748b;"></i>
+                <span style="
+                    position: absolute;
+                    top: -5px;
+                    right: -8px;
+                    background: var(--danger);
+                    color: white;
+                    border-radius: 50%;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                    font-weight: 700;">
+                    3
+                </span>
+            </div>
+            
+            <!-- User Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar">
+                    {{ user.first_name|first|upper }}
+                </div>
+                <div>
+                    <strong style="display: block; font-size: 13px;">{{ user.get_full_name }}</strong>
+                    <small style="color: #94a3b8;">{{ user.rol.get_nombre_display }}</small>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" style="
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    background: white;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    min-width: 200px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                    display: none;
+                    z-index: 1001;
+                    margin-top: 10px;
+                    margin-right: -30px;">
+                    <a href="{% url 'auth:perfil' %}" style="
+                        display: flex;
+                        align-items: center;
+                        padding: 12px 15px;
+                        color: var(--dark);
+                        text-decoration: none;
+                        border-bottom: 1px solid var(--border-color);
+                        font-size: 13px;">
+                        <i class="fas fa-user" style="width: 20px; margin-right: 10px;"></i>
+                        Mi Perfil
+                    </a>
+                    <a href="{% url 'auth:cambiar_password' %}" style="
+                        display: flex;
+                        align-items: center;
+                        padding: 12px 15px;
+                        color: var(--dark);
+                        text-decoration: none;
+                        border-bottom: 1px solid var(--border-color);
+                        font-size: 13px;">
+                        <i class="fas fa-key" style="width: 20px; margin-right: 10px;"></i>
+                        Cambiar Contraseña
+                    </a>
+                    <a href="{% url 'auth:logout' %}" style="
+                        display: flex;
+                        align-items: center;
+                        padding: 12px 15px;
+                        color: var(--danger);
+                        text-decoration: none;
+                        font-size: 13px;">
+                        <i class="fas fa-sign-out-alt" style="width: 20px; margin-right: 10px;"></i>
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block contenido %}{% endblock %}
+    </main>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle submenu
+        document.querySelectorAll('[data-toggle="submenu"]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const parent = this.closest('.sidebar-menu-item');
+                parent.classList.toggle('expanded');
+            });
+        });
+        
+        // Toggle user dropdown
+        document.getElementById('userDropdown').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').style.display = 
+                document.getElementById('dropdownMenu').style.display === 'none' ? 'block' : 'none';
+        });
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!document.getElementById('userDropdown').contains(e.target)) {
+                document.getElementById('dropdownMenu').style.display = 'none';
+            }
+        });
+    </script>
+    
+    {% block js_extra %}{% endblock %}
+</body>
+</html>

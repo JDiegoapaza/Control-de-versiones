@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}{{ reporte.titulo }}{% endblock %}
+{% block page_title %}Reporte{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'reportes:lista' %}">Reportes</a></li>
+<li class="breadcrumb-item active">{{ reporte.titulo|truncatechars:40 }}</li>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  .export-btn { min-width: 110px; }
+  .stat-pill { border-radius: 12px; padding: 16px 20px; }
+  .table-report th { background: #1e3a8a; color: #fff; font-size: 12px; letter-spacing: .3px; }
+  .table-report td { font-size: 13px; vertical-align: middle; }
+  .badge-nivel-bajo    { background:#dcfce7; color:#15803d; }
+  .badge-nivel-medio   { background:#fef9c3; color:#854d0e; }
+  .badge-nivel-alto    { background:#ffedd5; color:#c2410c; }
+  .badge-nivel-critico { background:#fee2e2; color:#b91c1c; }
+  @media print {
+    .no-print { display: none !important; }
+    .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+
+<!-- ── Cabecera del reporte ─────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4 border-0" style="background:linear-gradient(135deg,#1e3a8a,#3b5fc0);color:white">
+  <div class="card-body p-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h4 class="fw-bold mb-1">
+          <i class="bi bi-file-earmark-bar-graph me-2 opacity-75"></i>{{ reporte.titulo }}
+        </h4>
+        <div class="small opacity-80">
+          Tipo: <strong>{{ reporte.get_tipo_display }}</strong>
+          &nbsp;|&nbsp; Generado: <strong>{{ reporte.fecha_generacion|date:"d/m/Y H:i"|default:"—" }}</strong>
+          &nbsp;|&nbsp; Por: <strong>{{ reporte.generado_por }}</strong>
+        </div>
+      </div>
+      <div class="col-auto d-flex gap-2 flex-wrap no-print">
+        <button onclick="window.print()" class="btn btn-light btn-sm export-btn">
+          <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+        {% if reporte.estado == 'completado' %}
+        <a href="{% url 'reportes:pdf' reporte.pk %}" class="btn btn-danger btn-sm export-btn">
+          <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+        </a>
+        <a href="{% url 'reportes:excel' reporte.pk %}" class="btn btn-success btn-sm export-btn">
+          <i class="bi bi-file-earmark-excel me-1"></i>Excel
+        </a>
+        <a href="{% url 'reportes:csv' reporte.pk %}" class="btn btn-secondary btn-sm export-btn">
+          <i class="bi bi-filetype-csv me-1"></i>CSV
+        </a>
+        <a href="{% url 'reportes:json' reporte.pk %}" class="btn btn-outline-light btn-sm export-btn">
+          <i class="bi bi-code-slash me-1"></i>JSON
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if reporte.estado == 'error' %}
+<div class="alert alert-danger">
+  <i class="bi bi-exclamation-triangle me-2"></i><strong>Error al generar:</strong> {{ reporte.error_mensaje }}
+</div>
+{% elif reporte.estado != 'completado' %}
+<div class="alert alert-warning">
+  <i class="bi bi-hourglass-split me-2"></i>El reporte está en estado <strong>{{ reporte.get_estado_display }}</strong>.
+</div>
+{% else %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# INTERNOS                                                                    #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% if datos.tipo == 'internos' %}
+{% include 'reportes/sections/internos.html' %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# EVALUACIONES                                                                #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% elif datos.tipo == 'evaluaciones' %}
+{% include 'reportes/sections/evaluaciones.html' %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# REHABILITACION                                                              #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% elif datos.tipo == 'rehabilitacion' %}
+{% include 'reportes/sections/rehabilitacion.html' %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# AUDITORIA                                                                   #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% elif datos.tipo == 'auditoria' %}
+{% include 'reportes/sections/auditoria.html' %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# IA PREDICTIVA                                                               #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% elif datos.tipo == 'ia_predictiva' %}
+{% include 'reportes/sections/ia_predictiva.html' %}
+
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{# ESTADISTICO / default                                                       #}
+{# ═══════════════════════════════════════════════════════════════════════════ #}
+{% else %}
+{% include 'reportes/sections/estadistico.html' %}
+{% endif %}
+
+{% endif %}{# end estado == completado #}
+
+<div class="mt-4 no-print">
+  <a href="{% url 'reportes:lista' %}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Volver a lista
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+INFO 2026-06-08 17:21:16,281 views Login exitoso: diego
+WARNING 2026-06-09 22:44:22,976 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:23,931 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:24,196 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:24,209 views reCAPTCHA no completado: usuario_fantasma desde 127.0.0.1
+WARNING 2026-06-09 22:44:24,473 views reCAPTCHA no completado: inactivo_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:24,733 views reCAPTCHA no completado: bloqueado_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:25,105 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:25,106 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:25,108 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:25,109 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:44:25,110 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:33,951 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:34,186 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:34,419 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:34,427 views reCAPTCHA no completado: usuario_fantasma desde 127.0.0.1
+WARNING 2026-06-09 22:54:34,677 views reCAPTCHA no completado: inactivo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:34,902 views reCAPTCHA no completado: bloqueado_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:35,138 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:35,139 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:35,140 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:35,141 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-09 22:54:35,142 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+INFO 2026-06-10 18:52:33,777 views Login exitoso: diego
+WARNING 2026-06-10 18:55:19,998 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:20,529 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:20,936 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:20,949 views reCAPTCHA no completado: usuario_fantasma desde 127.0.0.1
+WARNING 2026-06-10 18:55:21,370 views reCAPTCHA no completado: inactivo_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:21,772 views reCAPTCHA no completado: bloqueado_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:22,138 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:22,140 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:22,142 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:22,144 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-10 18:55:22,147 views reCAPTCHA no completado: psicologo_test desde 127.0.0.1
+WARNING 2026-06-10 18:56:21,239 views reCAPTCHA no completado: admin_test desde 127.0.0.1
+WARNING 2026-06-10 18:56:21,248 views reCAPTCHA no completado: hacker_test desde 127.0.0.1
+INFO 2026-06-22 23:55:38,969 views Login exitoso: diego
+INFO 2026-06-23 11:54:45,688 views Login exitoso: diego
+INFO 2026-06-23 22:48:48,606 views Intento de login fallido: REERF
+INFO 2026-06-23 22:49:29,712 views Login exitoso: diego
+INFO 2026-06-24 16:55:36,366 views Login exitoso: diego

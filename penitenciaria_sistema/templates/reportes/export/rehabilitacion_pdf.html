@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>{{ datos.titulo }}</title>
+<style>body{font-family:Arial,sans-serif;font-size:10px;color:#1f2937}h1{font-size:15px;color:#1e3a8a;border-bottom:2px solid #1e3a8a;padding-bottom:5px}h2{font-size:11px;color:#1e3a8a;margin:10px 0 5px}.meta{color:#6b7280;font-size:9px;margin-bottom:8px}.stat{display:inline-block;border:1px solid #ddd;border-radius:3px;padding:5px 10px;margin:2px;text-align:center}.stat-n{font-size:18px;font-weight:bold;color:#1e3a8a}.stat-l{font-size:8px;color:#6b7280}table{width:100%;border-collapse:collapse;margin-bottom:10px}th{background:#1e3a8a;color:white;padding:5px 6px;text-align:left;font-size:9px}td{padding:4px 6px;border-bottom:1px solid #eee;font-size:9px}tr:nth-child(even) td{background:#f9fafb}.footer{margin-top:12px;border-top:1px solid #eee;padding-top:4px;color:#9ca3af;font-size:8px}</style>
+</head><body>
+<h1>{{ datos.titulo }}</h1><div class="meta">Generado: {{ datos.generado }} | Sistema SGEP</div>
+<div><div class="stat"><div class="stat-n">{{ datos.total }}</div><div class="stat-l">Total</div></div>
+<div class="stat"><div class="stat-n">{{ datos.completados }}</div><div class="stat-l">Completados</div></div>
+<div class="stat"><div class="stat-n">{{ datos.en_proceso }}</div><div class="stat-l">En proceso</div></div>
+<div class="stat"><div class="stat-n">{{ datos.avg_progreso }}%</div><div class="stat-l">Progreso prom.</div></div></div>
+<h2>Asignaciones</h2>
+<table><thead><tr><th>Interno</th><th>Programa</th><th>Tipo</th><th>Estado</th><th>Progreso</th><th>Inicio</th></tr></thead>
+<tbody>{% for fila in datos.filas %}<tr><td>{{ fila.interno }}</td><td>{{ fila.programa }}</td><td>{{ fila.tipo }}</td><td>{{ fila.estado }}</td><td>{{ fila.progreso }}</td><td>{{ fila.inicio }}</td></tr>{% endfor %}</tbody></table>
+<div class="footer">SGEP — Documento generado automáticamente. Confidencial.</div>
+</body></html>

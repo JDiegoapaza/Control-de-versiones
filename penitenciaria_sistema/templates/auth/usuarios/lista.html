@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+{% block page_title %}Gestión de Usuarios{% endblock %}
+
+{% block extra_head %}
+<style>
+.badge-activo   { background:#dcfce7; color:#15803d; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; }
+.badge-inactivo { background:#fee2e2; color:#b91c1c; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; }
+.badge-bloq     { background:#fef3c7; color:#92400e; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; }
+.filter-card    { background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:20px; }
+</style>
+{% endblock %}
+
+{% block header_title %}Gestión de Usuarios{% endblock %}
+{% block header_subtitle %}Administración de cuentas del sistema SGEP{% endblock %}
+{% block header_actions %}
+    <a href="{% url 'auth:usuario_crear' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-person-plus-fill me-1"></i> Nuevo Usuario
+    </a>
+{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="filter-card">
+    <form method="GET" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-600" style="font-size:13px;">Buscar</label>
+            <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                   placeholder="Nombre, usuario o email…">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-600" style="font-size:13px;">Rol</label>
+            <select name="rol" class="form-select form-select-sm">
+                <option value="">Todos los roles</option>
+                {% for r in roles %}
+                <option value="{{ r.id }}" {% if rol_id == r.id|stringformat:"s" %}selected{% endif %}>
+                    {{ r.get_nombre_display }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-600" style="font-size:13px;">Estado</label>
+            <select name="estado" class="form-select form-select-sm">
+                <option value="">Todos</option>
+                <option value="activo"   {% if estado == 'activo' %}selected{% endif %}>Activos</option>
+                <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-search me-1"></i> Filtrar
+            </button>
+            <a href="{% url 'auth:usuarios_lista' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-x-circle me-1"></i> Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-people-fill me-2"></i>Usuarios del sistema</span>
+        <span class="text-muted" style="font-size:12px;">{{ total }} resultado{{ total|pluralize }}</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre completo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Último login</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>
+                        <div class="fw-600" style="font-size:13px;">{{ u.username }}</div>
+                        <div style="font-size:11px; color:var(--text-muted);">{{ u.email|default:"—" }}</div>
+                    </td>
+                    <td style="font-size:13px;">{{ u.get_full_name|default:"—" }}</td>
+                    <td>
+                        <span style="font-size:12px; background:#e0f2fe; color:#0369a1;
+                                     border-radius:20px; padding:2px 10px; font-weight:600;">
+                            {{ u.rol.get_nombre_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if u.bloqueado %}
+                            <span class="badge-bloq"><i class="bi bi-lock-fill me-1"></i>Bloqueado</span>
+                        {% elif u.activo %}
+                            <span class="badge-activo"><i class="bi bi-check-circle-fill me-1"></i>Activo</span>
+                        {% else %}
+                            <span class="badge-inactivo"><i class="bi bi-x-circle-fill me-1"></i>Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-size:12px; color:var(--text-muted);">
+                        {{ u.ultimo_login|date:"d/m/Y H:i"|default:"Nunca" }}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{% url 'auth:usuario_detalle' uid=u.id %}"
+                               class="btn btn-outline-primary btn-sm" title="Ver detalle">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'auth:usuario_editar' uid=u.id %}"
+                               class="btn btn-outline-secondary btn-sm" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'auth:usuario_reset_password' uid=u.id %}"
+                               class="btn btn-outline-warning btn-sm" title="Restablecer contraseña">
+                                <i class="bi bi-key"></i>
+                            </a>
+                            {% if u.id != request.user.id %}
+                            <form method="POST" action="{% url 'auth:usuario_toggle' uid=u.id %}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('¿Confirma cambiar el estado de {{ u.username }}?')">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-sm {% if u.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                        title="{% if u.activo %}Desactivar{% else %}Activar{% endif %}">
+                                    <i class="bi bi-{% if u.activo %}person-x{% else %}person-check{% endif %}"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        <i class="bi bi-person-x" style="font-size:2rem; display:block; margin-bottom:8px;"></i>
+                        No se encontraron usuarios con los filtros aplicados.
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if usuarios.has_other_pages %}
+    <div class="card-header border-top" style="border-top:1px solid var(--border);">
+        <nav>
+            <ul class="pagination pagination-sm mb-0 justify-content-center">
+                {% if usuarios.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ usuarios.previous_page_number }}&q={{ q }}&rol={{ rol_id }}&estado={{ estado }}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">{{ usuarios.number }} / {{ usuarios.paginator.num_pages }}</span>
+                </li>
+                {% if usuarios.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ usuarios.next_page_number }}&q={{ q }}&rol={{ rol_id }}&estado={{ estado }}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
