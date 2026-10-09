@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SGEPR | Evaluaciones psicológicas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">S</span><div><strong>SGEPR</strong><small>Gestión penitenciaria</small></div></div>
+    <nav aria-label="Navegación principal">
+      <a href="#" class="nav-item">▦ &nbsp; Panel general</a>
+      <a href="#" class="nav-item active">▤ &nbsp; Evaluaciones</a>
+      <a href="#" class="nav-item">◷ &nbsp; Seguimiento</a>
+      <a href="#" class="nav-item">▧ &nbsp; Informes</a>
+    </nav>
+    <div class="sidebar-note"><strong>Prototipo académico</strong><p>Datos de demostración. No ingresar información clínica real.</p></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><p class="eyebrow">MÓDULO DE PSICOLOGÍA</p><h1>Evaluaciones psicológicas</h1><p class="subheading">Registro y consulta de evaluaciones para el seguimiento profesional.</p></div><div class="avatar" aria-label="Perfil de demostración">PS</div></header>
+    <section class="stats" aria-label="Resumen">
+      <article class="stat-card"><span>Evaluaciones registradas</span><strong id="totalCount">2</strong><small>En esta sesión de demostración</small></article>
+      <article class="stat-card"><span>Pendientes de revisión</span><strong id="pendingCount">1</strong><small>Requieren seguimiento profesional</small></article>
+      <article class="stat-card"><span>Última actualización</span><strong id="lastUpdate">Hoy</strong><small>Datos locales de prueba</small></article>
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><div><h2>Registrar evaluación</h2><p>Complete los campos obligatorios para agregar un registro de prueba.</p></div><span class="tag">Formulario interactivo</span></div>
+      <form id="evaluationForm">
+        <div class="form-grid">
+          <label>Código de registro <input id="recordCode" name="recordCode" placeholder="Ej. DEMO-003" required maxlength="20"></label>
+          <label>Fecha de evaluación <input id="evaluationDate" name="evaluationDate" type="date" required></label>
+          <label>Tipo de evaluación <select id="evaluationType" name="evaluationType" required><option value="">Seleccione…</option><option>Entrevista psicológica</option><option>Evaluación de seguimiento</option><option>Evaluación socioemocional</option><option>Revisión de objetivos</option></select></label>
+          <label>Estado del registro <select id="status" name="status"><option>Pendiente de revisión</option><option>Registrado</option><option>Seguimiento programado</option></select></label>
+          <label class="full">Observaciones profesionales (sin datos identificables)<textarea id="notes" name="notes" rows="3" placeholder="Anote una descripción general y objetiva…" required maxlength="500"></textarea></label>
+        </div>
+        <div class="form-actions"><p id="formMessage" role="status" aria-live="polite"></p><button type="submit">Guardar evaluación</button></div>
+      </form>
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><div><h2>Historial de demostración</h2><p>Los registros se mantienen en la tabla mientras la página está abierta.</p></div><input id="searchInput" class="search" type="search" placeholder="Buscar por código…" aria-label="Buscar por código"></div>
+      <div class="table-wrap"><table><thead><tr><th>Código</th><th>Fecha</th><th>Tipo</th><th>Estado</th><th>Observación</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+      <p class="privacy-note">Privacidad: esta maqueta no guarda información en un servidor ni reemplaza el juicio clínico. Los indicadores no constituyen diagnósticos.</p>
+    </section>
+    <footer>SGEPR · Prototipo de interfaz para actividad H3-T4</footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
