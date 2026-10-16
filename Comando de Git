@@ -1,0 +1,149 @@
+# Guía paso a paso de Git para tu repositorio
+
+Ejecuta todo en la terminal (Git Bash en Windows). Reemplaza `TU_USUARIO`, `Tu Nombre` y el correo con tus datos.
+
+## Paso 0. Configuración inicial (solo la primera vez)
+
+```bash
+# Git necesita saber quién firma los commits
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu_correo@ejemplo.com"
+
+# Comprueba que quedó guardado
+git config --list
+```
+
+## Paso 1. Crear el repositorio con las ramas `main` y `develop`
+
+```bash
+# Crea la carpeta del proyecto y entra en ella
+mkdir proyecto-rehabilitacion
+cd proyecto-rehabilitacion
+
+# Inicializa el repositorio y nombra "main" a la rama principal
+git init -b main
+
+# Crea un README y un .gitignore para tener algo que versionar
+echo "# Plataforma Web con ML - Evaluaciones Psicologicas y Rehabilitacion" > README.md
+printf "__pycache__/\n*.pyc\n.env\nvenv/\nnode_modules/\n" > .gitignore
+
+# Revisa qué archivos están pendientes
+git status
+
+# Pasa los archivos al área de preparación (staging) y haz el primer commit
+git add README.md .gitignore
+git commit -m "chore: commit inicial del repositorio"
+
+# Crea la rama develop desde main y cámbiate a ella
+git branch develop
+git checkout develop
+```
+
+Con esto ya tienes `main` (versión estable) y `develop` (rama de integración).
+
+## Paso 2. Crear la rama `feature` desde `develop` y hacer commits
+
+```bash
+# Crea la rama de la funcionalidad a partir de develop y entra en ella
+git checkout -b feature/modelo-relacional develop
+
+# Crea la estructura de carpetas
+mkdir database docs
+```
+
+Ahora copia a esas carpetas los archivos que preparamos:
+
+- `database/schema.sql`
+- `database/seed.sql`
+- `database/queries.sql`
+- `docs/modelo_relacional.md`
+
+```bash
+# Commit 1: el esquema (CREATE TABLE)
+git add database/schema.sql
+git commit -m "feat(db): agrega CREATE TABLE de las 15 tablas del modelo relacional"
+
+# Commit 2: datos de prueba y consultas SELECT
+git add database/seed.sql database/queries.sql
+git commit -m "feat(db): agrega datos de prueba y consultas SELECT del proyecto"
+
+# Commit 3: documentación
+git add docs/modelo_relacional.md
+git commit -m "docs: agrega documento del modelo relacional"
+```
+
+La tarea pide al menos un commit con mensaje descriptivo. Hacer tres, cada uno con un propósito claro, muestra mejor el historial. El prefijo (`feat`, `docs`, `chore`) indica el tipo de cambio.
+
+## Paso 3. Integrar la feature en `develop`
+
+```bash
+# Vuelve a develop
+git checkout develop
+
+# Une la rama feature. --no-ff conserva un commit de merge visible en el historial
+git merge --no-ff feature/modelo-relacional -m "merge: integra feature/modelo-relacional en develop"
+```
+
+## Paso 4. Subir el repositorio a GitHub
+
+Primero crea en GitHub un repositorio **vacío** llamado `proyecto-rehabilitacion`, sin README ni .gitignore. Luego:
+
+```bash
+# Conecta tu repositorio local con el remoto
+git remote add origin https://github.com/TU_USUARIO/proyecto-rehabilitacion.git
+
+# Sube las tres ramas (-u deja configurado el seguimiento)
+git push -u origin main
+git push -u origin develop
+git push -u origin feature/modelo-relacional
+```
+
+Si GitHub pide contraseña, usa un **Personal Access Token** (Settings → Developer settings → Tokens), porque ya no acepta la contraseña de la cuenta.
+
+## Paso 5. Verificar y tomar capturas para el informe
+
+```bash
+# Lista todas las ramas, locales y remotas
+git branch -a
+
+# Muestra el historial como gráfico (ideal para la captura del foro)
+git log --oneline --graph --all
+```
+
+Deberías ver el commit inicial, los tres commits de la feature y el merge en `develop`.
+
+## Paso 6. Entrega en el foro
+
+1. Copia la URL: `https://github.com/TU_USUARIO/proyecto-rehabilitacion`.
+2. Verifica que el repositorio sea **público**, o en Settings → Collaborators añade al docente.
+3. Exporta el documento del modelo relacional a PDF o Word.
+4. Sube la URL, el documento y las capturas al foro.
+
+## Flujo para los siguientes sprints
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/autenticacion     # una rama por funcionalidad
+# ... trabajas y haces commits ...
+git checkout develop
+git merge --no-ff feature/autenticacion
+git push origin develop
+```
+
+Solo cuando cierres un hito, integra `develop` en `main`:
+
+```bash
+git checkout main
+git merge --no-ff develop -m "release: entrega Hito 3"
+git push origin main
+```
+
+## Errores comunes
+
+| Problema | Solución |
+| --- | --- |
+| `fatal: not a git repository` | Estás fuera de la carpeta del proyecto. Usa `cd proyecto-rehabilitacion`. |
+| `nothing to commit` | Olvidaste `git add` o los archivos no están en la carpeta. |
+| `error: failed to push` | El repositorio remoto no estaba vacío. Haz `git pull origin main --allow-unrelated-histories` y repite el push. |
+| Te equivocaste en el mensaje del último commit | `git commit --amend -m "nuevo mensaje"` (solo antes de hacer push). |
